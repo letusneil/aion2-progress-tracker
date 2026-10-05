@@ -17,7 +17,7 @@ Progress is saved in your browser's local storage. Use **Settings → Export bac
 | **Roadmap** | *Where am I and what's next?* Eight breakpoints, each with one goal, a "done when" condition and a short checklist. Enter your item level and the tracker picks your current breakpoint. |
 | **Today** | *What should I do right now?* Daily checklist, plus banked counters (Odyle Energy, Transcendence, Conquest, Nightmare, Shugo keys) sorted by which caps first. |
 | **This week** | *What's left before Wednesday?* The weekly checklist, which clears itself at the weekly reset. |
-| **Class notes** | Spiritmaster cheat sheet. |
+| **Class notes** | Spiritmaster PvE and PvP builds (skills, specialties, stigmas, Daevanion, stats, Arcana), two macros, and how to reset skills, stigmas and Daevanion. |
 | **Settings** | Server region (sets the reset time), subscription (Odyle cap 560 → 840), backup. |
 
 ### The breakpoints

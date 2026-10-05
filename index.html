@@ -57,7 +57,10 @@ ul.check input[type=checkbox]{margin-top:3px;width:16px;height:16px;accent-color
 .ctr .row{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:8px}
 .ctr.bad{border-color:var(--bad)}.ctr.warn{border-color:var(--warn)}
 table{width:100%;border-collapse:collapse}
-td,th{text-align:left;padding:6px 4px;border-top:1px solid var(--line);vertical-align:top}
+td,th{text-align:left;padding:8px 6px;border-top:1px solid var(--line);vertical-align:top}
+th{width:150px;font-weight:600;color:var(--muted)}
+#notes ol{margin:6px 0;padding-left:22px}
+#notes h3{margin-top:12px}
 .note{font-size:12px;color:var(--muted);margin-top:6px}
 a{color:var(--accent)}
 @media (max-width:600px){main{padding:12px}header{padding:10px 12px}}
@@ -127,7 +130,7 @@ a{color:var(--accent)}
 
   <!-- NOTES -->
   <section id="notes">
-    <div class="card" id="notesCard"></div>
+    <div id="notesWrap"></div>
   </section>
 
   <!-- SETTINGS -->
@@ -298,17 +301,93 @@ const WEEKLY = [
 ];
 
 const CLASS_NOTES = `
-<h2>Spiritmaster cheat sheet</h2>
-<ul>
-<li>Each spirit skill gives 1 charge. 4 charges → <b>Four Elements</b> → fire <b>Elemental Fusion</b> right away. The charges can all be the same element.</li>
-<li><b>Never hold Fusion</b> — you can't build new charges while Four Elements is up.</li>
-<li>Water Spirit when short on MP · Fire Spirit for packs · Earth Spirit to pull aggro · Wind Spirit for healing.</li>
-<li>Skill order: Combustion → Elemental Fusion → Cold Shock → Summon: Fire Spirit → Jointstrike: Curse. Stop most skills at 20 and unlock specialties.</li>
-<li>Stigma order: Summon: Ancient Spirit (aim for rank 15) → Spirit's Benediction → Corrode or Flame Blessing.</li>
-<li>Rotation: Flame Blessing + Spirit's Benediction → DoTs → cycle spirits for charges → Fusion the moment it's up.</li>
-<li>Starter macro: Benediction → Flame Blessing → Cold Shock → Earth Spirit ×2 → Elemental Fusion.</li>
-</ul>
-<p class="note">Edit <code>CLASS_NOTES</code> in index.html to change this page.</p>`;
+<div class="card goalbox">
+<h2>Spiritmaster in one paragraph</h2>
+<p>You win by keeping spirits busy. Each spirit skill gives one element charge. At 4 charges you get <b>Four Elements</b>, which unlocks <b>Elemental Fusion</b>, your biggest hit. Fire Fusion the moment it's up, because you can't build new charges while Four Elements is active. The charges can all be the same element. Strong in PvE (pets and DoTs keep doing damage while you move). Average in PvP: lots of control, but weak against fast divers like Assassin and Ranger.</p>
+<div class="note">Spirits: <b>Water</b> when short on MP · <b>Fire</b> for packs · <b>Earth</b> to pull aggro (it also taunts players) · <b>Wind</b> for healing · <b>Ancient</b> (stigma) is your extra damage spirit.</div>
+</div>
+
+<div class="card">
+<h2>Build 1 — PvE (default)</h2>
+<table>
+<tr><th>Skill levels</th><td>
+Take <b>Combustion → Elemental Fusion → Cold Shock</b> to 20 first. Then <b>Summon: Fire Spirit</b>, <b>Spirit Strike</b> and <b>Jointstrike: Curse</b>. Keep most other skills at 20 and spend the rest on specialties.</td></tr>
+<tr><th>Specialties</th><td>
+<b>Cold Shock:</b> +20% MP restored (this fixes your mana).<br>
+<b>Combustion:</b> −20% MP cost, plus more damage on fewer targets. Once your gear is better, swap the first one for +20% Skill Speed.<br>
+<b>Elemental Fusion:</b> extra damage after 3 s.</td></tr>
+<tr><th>Stigmas<br><span class="small muted">Global has 4 slots, unlocking at 22 / 27 / 32 / 37</span></th><td>
+1. <b>Summon: Ancient Spirit</b>. Rank 15 drops its attack interval from 7 s to 5 s, so it's the first one to level.<br>
+2. <b>Enhance: Spirit's Benediction</b> (+20% PvE damage, +20% PvE damage taken reduction, HP regen)<br>
+3. <b>Flame Blessing</b> (your personal damage buff)<br>
+4. <b>Jointstrike: Corrode</b> (DoT, spirit damage +10% on the target)<br>
+<span class="note">Leveling a stigma to rank 20 costs 75 Stigma Shard points (1/2/4/8 per level per block of 5). Shards come from the Abyss Exchange Shop, paid with Abyss Points.</span></td></tr>
+<tr><th>Daevanion</th><td>
+Take skill nodes first: Combustion +1 and Elemental Fusion +1 (Nezekan and Zikel), Spirit Strike +1 (Nezekan), Cold Shock +1 (Zikel). Fill Nezekan, Vaizel and Zikel before going deep into Triniel. Azphel (unlocks at 45) comes last. Top players have about 60/88 on the first three boards.</td></tr>
+<tr><th>Stats</th><td>
+Overall: Smite ≈ Attack increase ≈ Combat Speed &gt; Damage Boost ≈ Weapon Damage Boost &gt; Crit Damage &gt; flat Attack &gt; Crit chance.<br>
+<b>Manastones:</b> Damage Boost &gt; Crit Damage Boost &gt; Front Attack Damage Boost &gt; Attack &gt; Accuracy &gt; Crit. Combat Speed isn't in the manastone pool.<br>
+<b>Soul binding</b> (weapon/guard): Combat Speed, Weapon Damage Boost, Damage Boost, Might. Add Accuracy if your attacks miss.</td></tr>
+<tr><th>Arcana</th><td>
+Parchment: Elemental Fusion, then Fire Spirit · Compass: Combustion · Bell: Spirit Strike, then Element Unification · Mirror: Mental Focus.</td></tr>
+</table>
+</div>
+
+<div class="card">
+<h2>Build 2 — PvP / Abyss</h2>
+<table>
+<tr><th>Stigmas</th><td>Run the same four: <b>Ancient Spirit, Spirit's Benediction, Flame Blessing, Corrode</b>. Top KR players run these 93–99% of the time. Corrode at rank 15 also cuts the target's healing by 70%.</td></tr>
+<tr><th>Skills to add</th><td><b>Siphon</b> (drains 300 MP), <b>Seize Magic</b> (strips 2 buffs), <b>Command: Proxy</b>, <b>Soul's Cry</b> (fear), <b>Dimensional Control</b> (root).</td></tr>
+<tr><th>How to fight</th><td>
+• Open with Earth Spirit for the taunt/CC. If that misses or they break it, root with Dimensional Control, then <b>Soul's Cry</b> (fear).<br>
+• Save <b>Corrode</b> for right after they drink a potion or get healed.<br>
+• Use <b>Seize Magic</b> on buffed melee before they reach you.<br>
+• Don't duel Assassins or Rangers in the open. Fight near your group, because your control helps the team most.</td></tr>
+</table>
+</div>
+
+<div class="card">
+<h2>Macros</h2>
+<p class="small muted">Open the skill window (<b>K</b>) → Macro tab. Set the step delay by ping: under 50 ms ping → 5–10 ms delay · 50–100 → 10–20 ms · 100–150 → 20–30 ms (some players use 40 ms on high ping).</p>
+<h3>Macro A — Opener / burst (one key)</h3>
+<ol>
+<li>Enhance: Spirit's Benediction</li>
+<li>Flame Blessing</li>
+<li>Cold Shock</li>
+<li>Summon: Earth Spirit</li>
+<li>Summon: Earth Spirit</li>
+<li>Elemental Fusion</li>
+</ol>
+<p class="small">Use it at the start of a pull and whenever the buffs come back. It buffs, restores MP, builds charges and ends on Fusion.</p>
+<h3>Macro B — Spirit cycle (sustain, 15 steps, 10 ms)</h3>
+<ol>
+<li>Cold Shock</li>
+<li>Summon: Earth Spirit</li>
+<li>Dimensional Control</li>
+<li>Enhance: Spirit's Benediction</li>
+<li>Summon: Water Spirit</li>
+<li>Summon: Wind Spirit</li>
+<li>Summon: Fire Spirit</li>
+<li>Combustion</li>
+<li>Elemental Fusion</li>
+<li>Steps 10–15: repeat Cold Shock / spirit summons / Elemental Fusion</li>
+</ol>
+<p class="small">Skills on cooldown are skipped, so the macro just fires whatever is ready. Late game, swap Wind Spirit for Ancient Spirit.</p>
+<h3>Manual rotation</h3>
+<p class="small">Flame Blessing + Benediction → DoTs (Combustion, Corrode) → cycle spirits for 4 charges → <b>Fusion right away</b> → Cold Shock filler for MP → repeat.</p>
+</div>
+
+<div class="card">
+<h2>How to reset</h2>
+<table>
+<tr><th>Skill points</th><td><b>Free and unlimited.</b> Press <b>K</b> and click the circular reset button next to the skill point counter, then confirm. All skill points come back. Skill levels from Daevanion nodes, Arcana and gear stay where they are.</td></tr>
+<tr><th>Ancestry skills</th><td>The 4 skills from the red level-25 Ancestry quest cost <b>Kinah</b> to reset.</td></tr>
+<tr><th>Stigmas</th><td>Resetting a stigma refunds its Shard points. Check the cost in the confirm window (KR removed the fee later; Global may differ). You can't swap stigmas in combat.</td></tr>
+<tr><th>Daevanion</th><td>KR/TW let you refund a single node for a Kinah fee (500 each there). Global's price and rules aren't confirmed, and some guides say Global nodes can't be refunded. <b>Read the confirm window before you click</b>, and plan nodes before you spend.</td></tr>
+<tr><th>Keybinds</th><td>Settings (cog) → Key Settings. Each tab has its own Reset button.</td></tr>
+</table>
+</div>
+<p class="note">Sources: game8, metabot, allthings.how, sportskeeda, mmo-codex, wikily.gg (top-player node data), mmoherald (stat weights), vortexgaming, expcarry. Numbers are from early Oct 2026 and can change after a patch. Edit <code>CLASS_NOTES</code> in index.html to change this page.</p>`;
 
 /* =====================================================================
    STATE
@@ -606,7 +685,7 @@ $("wipeBtn").onclick = () => {
   }
 };
 
-$("notesCard").innerHTML = CLASS_NOTES;
+$("notesWrap").innerHTML = CLASS_NOTES;
 try { const t = sessionStorage.getItem("tab"); if (t) document.querySelector(`nav button[data-tab="${t}"]`)?.click(); } catch {}
 renderAll();
 setInterval(() => { renderTimers(); if (document.querySelector("#today.on") && !document.activeElement?.matches("#today input")) renderToday(); }, 30e3);
