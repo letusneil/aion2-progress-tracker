@@ -50,6 +50,7 @@ All game numbers sit in one block at the top of the `<script>` in `index.html`: 
 
 - **Main source:** the [Aion 2 community spreadsheet](https://docs.google.com/spreadsheets/d/1lbHaVairHaz26M8XGNF9CBWqiiHHBM6CylTwNKnlOug/htmlview), using its Roadmap, DailyWeeklies and Spirit Master tabs. The roadmap is credited to Divided.
 - [SIRIN's Global Spiritmaster guide](https://docs.google.com/document/d/16RBdqrTCKJ4TZJNEkYri9hLYcMv-Hle2pW6HXSNCX7c/edit?tab=t.0), linked from the sheet and updated 21 Sep 2026. Skills, specialties, stigmas, macros and stats come from it.
+- [TheWhelps – 1400 To 2100 Guide, Road To 3 Star Conquest](https://www.youtube.com/watch?v=u3Wb6tH0mZs) is linked on breakpoint 3. Its 1,400 → 2,100 tips come from written guides that cover the same route, because the video's transcript couldn't be fetched.
 - Gaps (refill rates, reset times, the raid gates) are filled from Global guides from early Oct 2026: metabot.gg, aion2timers, mmoexp and game8.
 
 Patches change these numbers, so treat them as a starting point.

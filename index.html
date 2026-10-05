@@ -234,11 +234,17 @@ const BREAKPOINTS = [
     id: "il1400", title: "Item level ~1,400 → Vakron Sky Island", il: 1400,
     goal: "All gear to +10 with Manastones — enough for Vakron.",
     done: "About 1,400 item level.",
+    video: "https://www.youtube.com/watch?v=u3Wb6tH0mZs",
+    videoLabel: "▶ Whelps: 1,400 → 2,100 guide",
     tasks: [
       { id: "plus10", t: "Enhance every gear piece to +10.",
         info: "Enhancing raises a piece's level (+1, +2…). Item level = the total power of all your gear, and it's what unlocks dungeons." },
       { id: "mana", t: "Socket Manastones in everything.",
         info: "Manastones are stat gems you put into gear sockets. Early on, any Attack / Crit / Accuracy stone is fine." },
+      { id: "ambelt3", t: "Belt and amulet: take them to +10, then upgrade to the next rarity with Substance Morph. Repeat.",
+        info: "Green → blue → yellow. Each step is a big item level jump." },
+      { id: "shards", t: "Spend Abyss Points on Stigma Shards first.",
+        info: "They don't raise item level, but stronger stigmas make you much stronger (and easier to get groups)." },
       { id: "riftloop", t: "If it works like KR/TW: visit the Rift every 3 hours for extra Strongholds and dungeons." },
       { id: "loop", t: "Start doing the Today and This week tabs every reset." }
     ]
@@ -251,6 +257,9 @@ const BREAKPOINTS = [
     tasks: [
       { id: "vakset", t: "Run Vakron Sky Island until you have the full set.",
         info: "Vakron is a 2★ Exploration dungeon (a group dungeon you can matchmake into) that drops an armor set." },
+      { id: "vak3", t: "Run Vakron Exploration 3 times for the guaranteed chest piece, then spend Odyle Energy on Vakron Conquest toward the next guaranteed piece.",
+        info: "Conquest = the harder, energy-gated version of a dungeon. Prioritise gloves with Combat Speed, then boots with Move Speed." },
+      { id: "vak10", t: "Enhance your Vakron pieces as you get them." },
       { id: "pity", t: "At 7/8 pieces and far from pity, switch to the Expedition version to hit pity.",
         info: "'Pity' = a guaranteed drop after enough runs without luck. The Expedition version counts toward it faster." }
     ]
@@ -261,6 +270,8 @@ const BREAKPOINTS = [
     done: "All green cards and about 1,920 item level.",
     video: "https://www.youtube.com/watch?v=2IRfvEWFvqk",
     tasks: [
+      { id: "arkanis", t: "Run both Transcendence dungeons: Deus Research Base and Shattered Arkanis.",
+        info: "They drop different cards. Deus: Chalice, Compass, Bell. Shattered Arkanis: Chalice, Parchment, Mirror. Alternate to fill all 5 slots. Equip the highest rarity you have, even with bad skills on it." },
       { id: "green", t: "Farm Deus Stage 1 until you have all green cards (blues are a bonus).",
         info: "Deus Research Base is a Transcendence dungeon. It drops Arcana: cards you equip that add stats and skill levels. Rarity goes green → blue → yellow." },
       { id: "ambelt2", t: "Level your belt and amulet for extra item level, bulk and damage.",
@@ -275,7 +286,9 @@ const BREAKPOINTS = [
       { id: "blue", t: "Farm Deus Stage 2 until you have all blue cards, ideally with your main skills on them." },
       { id: "skill16", t: "Main skills at level 16+ (Combustion, Elemental Fusion).",
         info: "Skill levels above the normal cap come from Arcana, gear and Daevanion nodes." },
-      { id: "board", t: "Spend Daevanion points." }
+      { id: "board", t: "Spend Daevanion points." },
+      { id: "c3", t: "At 2,100: 3★ Conquest opens (Fire Temple and Ferocious Horn Den).",
+        info: "The goal of the Whelps 1,400 → 2,100 video. These drop the next tier of gear." }
     ]
   },
   {
@@ -322,14 +335,14 @@ const COUNTERS = [
 
 // From the sheet's "DailyWeeklies" tab.
 const DAILY = [
-  { id: "duty", t: "Duty Quests", n: 5 },
+  { id: "duty", t: "Duty Quests", n: 5, info: "When you reroll a Duty Quest reward, take Odyle Energy if it shows up; otherwise enhancement stones." },
   { id: "nmd", t: "Nightmare (2 per day)" },
   { id: "shugo", t: "Shugo Festival (2 per day)" },
   { id: "odylecap", t: "Spend Odyle Energy so it isn't sitting at the cap" }
 ];
 
 const WEEKLY = [
-  { id: "asc", t: "Ascension Trial", n: 3 },
+  { id: "asc", t: "Ascension Trial", n: 3, info: "Rewards scale with how well you do. Save attempts until you're stronger, but use them before the weekly reset." },
   { id: "dd", t: "Daily Dungeon", n: 14 },
   { id: "bf", t: "Battlefield", n: 3 },
   { id: "corr", t: "Abyss Corridors", n: 3 },
@@ -338,7 +351,7 @@ const WEEKLY = [
   { id: "pvpw", t: "PvP weekly quests", n: 20 },
   { id: "morph", t: "Substance Morph / Odyle craft", n: 20 },
   { id: "subshop", t: "Subscriber Shop" },
-  { id: "wb", t: "Optional: World Boss", n: 1 },
+  { id: "wb", t: "Optional: World Boss", n: 1, info: "Boss artwork collections give Pantheon stats. Watch chat or ask your Legion for groups." },
   { id: "supply", t: "Optional: Supply Request", n: 1 },
   { id: "raid", t: "Ludra raid attempts", n: 4, minIl: 2700 }
 ];
@@ -367,7 +380,8 @@ const GLOSSARY = [
   ["Nightmare", "Boss challenge mode with 2 tries per day. Has its own shop."],
   ["Shugo Festival", "Minigame event, 2 per day. Gives gear, crafting materials and stigma shards."],
   ["Exploration / Expedition dungeon", "Group dungeons you can matchmake into. Vakron Sky Island is a 2★ one."],
-  ["Transcendence / Deus Research Base", "Dungeon with stages (★1–★4) that drops Arcana cards."],
+  ["Transcendence (Deus / Shattered Arkanis)", "Two dungeons with stages ★1–★4 (item level 1,600 / 1,900 / 2,200 / 2,500) that drop Arcana cards. Deus: Chalice, Compass, Bell. Arkanis: Chalice, Parchment, Mirror."],
+  ["Exploration vs Conquest", "Two modes of the same dungeon. Exploration is the easier one; Conquest is harder, costs Odyle Energy for the reward and drops better gear. 3★ Conquest (Fire Temple, Ferocious Horn Den) needs item level 2,100."],
   ["Arcana", "Cards you equip that add Divine stats and skill levels. Rarity: green → blue → yellow. Sets: Chalice, Parchment, Compass, Bell, Mirror."],
   ["Stigma / Stigma Shards", "Extra skills you slot in (4 slots on Global, unlocking at 22/27/32/37). Shards level them; buy shards with Abyss Points."],
   ["Specialty", "Optional upgrades on each skill (5 lines per skill, listed top to bottom). You pick a few as the skill levels up."],
@@ -535,7 +549,7 @@ const CLASS_NOTES = `
 <p class="note">Sources: <a href="${SHEET}" target="_blank" rel="noopener">community sheet</a> (Spirit Master, Roadmap and DailyWeeklies tabs) ·
 <a href="${SM_GUIDE}" target="_blank" rel="noopener">SIRIN's Global Spiritmaster guide</a> ·
 <a href="https://aion2-elementalist-guide.netlify.app/" target="_blank" rel="noopener">Elementalist guide</a> ·
-<a href="https://questlog.gg/aion-2/en/skill-builder" target="_blank" rel="noopener">questlog skill builder</a>.
+<a href="https://questlog.gg/aion-2/en/skill-builder" target="_blank" rel="noopener">questlog skill builder</a> · <a href="https://www.youtube.com/watch?v=u3Wb6tH0mZs" target="_blank" rel="noopener">Whelps: 1,400 → 2,100</a>.
 Numbers can change after a patch — edit <code>CLASS_NOTES</code> in index.html.</p>`;
 
 /* =====================================================================
@@ -722,7 +736,7 @@ function renderRoadmap() {
         <div><span class="muted small">Breakpoint ${i + 1}</span><h3>${cleared ? "✔ " : ""}${esc(b.title)}</h3>
         <div class="small muted">Goal: ${esc(b.goal)}</div></div>
         <span class="pill">${done}/${b.tasks.length}</span></div>
-      <div class="body"><div class="small"><b>Done when:</b> ${esc(b.done)}${linkHtml(b.video, "▶ Guide video")}</div><ul class="check"></ul></div>`;
+      <div class="body"><div class="small"><b>Done when:</b> ${esc(b.done)}${linkHtml(b.video, b.videoLabel || "▶ Guide video")}</div><ul class="check"></ul></div>`;
     const ul = card.querySelector("ul");
     b.tasks.forEach(t => ul.appendChild(taskRow(b.id + "." + t.id, t, S.bpTasks, () => { save(); renderRoadmap(); })));
     card.querySelector(".head").onclick = () => { S.openBp = b.id === openId ? "none" : b.id; save(); renderRoadmap(); };
