@@ -14,11 +14,12 @@ Progress is saved in your browser's local storage. Use **Settings → Export bac
 
 | Tab | What it answers |
 |---|---|
-| **Roadmap** | *Where am I and what's next?* Eight breakpoints, each with one goal, a "done when" condition and a short checklist. Enter your item level and the tracker picks your current breakpoint. |
+| **Roadmap** | *Where am I and what's next?* Each breakpoint has with one goal, a "done when" condition and a short checklist. Every task has a short plain-English explanation under it. Enter your item level and the tracker picks your current breakpoint. |
 | **Today** | *What should I do right now?* Daily checklist, plus banked counters (Odyle Energy, Transcendence, Conquest, Nightmare, Shugo keys) sorted by which caps first. |
 | **This week** | *What's left before Wednesday?* The weekly checklist, which clears itself at the weekly reset. |
+| **Glossary** | Plain-English meanings of game terms (Sealed Dungeon, Daevanion Crystal, Arcana and more), with a search box. |
 | **Class notes** | Spiritmaster: skill levels, specialty order, stigmas (with early/mid/late levels), two macro setups, gear/stat/Arcana priorities, PvP and how to reset skills. |
-| **Settings** | Server region (sets the reset time), subscription (Odyle cap 560 → 840), backup. |
+| **Settings** | Server region (sets the reset time) and backup. |
 
 ### The breakpoints
 
@@ -26,15 +27,14 @@ These follow the Roadmap tab of the community sheet. Item levels marked ~ are it
 
 | # | Target | Goal |
 |---|---|---|
-| 1 | Level 45 | Main Story, plus Sealed Dungeons, regional quests, feathers and Strongholds along the way |
+| 1 | Level 45 | Main Story, plus Sealed Dungeons, Regional quests, feathers and Strongholds along the way |
 | 2 | Item level 1,000 | Use up the free power, then go into the Abyss |
 | 3 | ~1,400 | Get all gear to +10 with Manastones, which is enough for Vakron Sky Island |
 | 4 | 1,600 | Farm the full Vakron set, which opens Deus ★1 |
 | 5 | ~1,920 | Collect every green Arcana card from Deus ★1 |
 | 6 | ~2,190 | Collect every blue card from Deus ★2 and get main skills to 16 |
 | 7 | ~2,560 | Get accessories from Kromede, and armor and Guard from Ferocious Horn Den |
-| 8 | 2,800 | Get yellow cards from Deus ★3/★4 and the Ludra enhancement targets (+17/+16/+15) |
-| 9 | 4,500 | Chalice of Muspel |
+| 8 | Ludra prep | Get yellow cards from Deus ★3/★4 and the Ludra enhancement targets (+17/+16/+15) |
 
 ### How the counters work
 
