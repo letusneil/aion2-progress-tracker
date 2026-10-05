@@ -51,4 +51,6 @@ All game numbers sit in one block at the top of the `<script>` in `index.html`: 
 - Muspel's Global entry gate is item level 4,500. Ludra is listed as 2,800, but some guides say 2,700, so check in game.
 - The Android app spec was dropped in favour of a single local HTML file.
 
+Primary reference: [Aion 2 community spreadsheet](https://docs.google.com/spreadsheets/d/1lbHaVairHaz26M8XGNF9CBWqiiHHBM6CylTwNKnlOug/htmlview).
+
 Numbers come from Global-client guides and community posts around launch (early Oct 2026). Sources include Stoopz's "Everything I Wish I Knew Before Playing AION 2", metabot.gg, mmoexp, game8 and aion2timers. Patches change these numbers, so treat them as a starting point.
