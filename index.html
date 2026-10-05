@@ -40,6 +40,12 @@ button.primary{background:var(--accent);border-color:var(--accent);color:#08111f
 ul.check{list-style:none;padding:0;margin:8px 0 0}
 ul.check li{display:flex;gap:10px;align-items:flex-start;padding:6px 0;border-top:1px solid var(--line)}
 ul.check li:first-child{border-top:0}
+ul.check a{white-space:nowrap}
+details.card summary{cursor:pointer;list-style:none}
+details.card summary::-webkit-details-marker{display:none}
+details.card[open] summary{margin-bottom:8px}
+#notes ul{padding-left:20px;margin:6px 0}
+#notes li{margin:4px 0}
 ul.check li.done .t{color:var(--muted);text-decoration:line-through}
 ul.check input[type=checkbox]{margin-top:3px;width:16px;height:16px;accent-color:var(--accent)}
 .t{flex:1}
@@ -63,7 +69,7 @@ th{width:150px;font-weight:600;color:var(--muted)}
 #notes h3{margin-top:12px}
 .note{font-size:12px;color:var(--muted);margin-top:6px}
 a{color:var(--accent)}
-@media (max-width:600px){main{padding:12px}header{padding:10px 12px}}
+@media (max-width:600px){main{padding:12px}header{padding:10px 12px}th{width:auto}td,th{overflow-wrap:anywhere;padding:6px 4px}ul.check a{white-space:normal}}
 </style>
 </head>
 <body>
@@ -169,90 +175,107 @@ a{color:var(--accent)}
 <script>
 /* =====================================================================
    GAME DATA — edit this block when a patch changes numbers.
-   Sources: Global-client guides and community posts, early Oct 2026.
+   Main source: the community sheet (SHEET below). Gaps filled from Global guides, early Oct 2026.
    ===================================================================== */
+const SHEET = "https://docs.google.com/spreadsheets/d/1lbHaVairHaz26M8XGNF9CBWqiiHHBM6CylTwNKnlOug/htmlview";
+const SM_GUIDE = "https://docs.google.com/document/d/16RBdqrTCKJ4TZJNEkYri9hLYcMv-Hle2pW6HXSNCX7c/edit?tab=t.0";
+
+// Roadmap follows the "Roadmap" tab of the community sheet (credit: Divided).
+// `il` = item level that marks the breakpoint as cleared. `video` = optional guide link.
 const BREAKPOINTS = [
   {
     id: "lv45", title: "Reach level 45", gate: "level",
-    goal: "Hit the level cap fast, with your Odyle Energy saved for endgame.",
+    goal: "Run the Main Story to 45 and pick up the one-time rewards on the way.",
     done: "Your character is level 45.",
     tasks: [
-      { id: "story", t: "Follow the yellow Main Story quests. When it stalls: green Regional quests → nearby Sealed Dungeons → back to story." },
-      { id: "nogrind", t: "Don't grind mobs and don't farm perfect levelling gear." },
-      { id: "lv22", t: "Push to level 22 on day 1 — that's where Odyle Energy starts generating." },
-      { id: "saveodyle", t: "Save Odyle Energy for level-45 Expeditions/Conquest. Don't spend it on level 20/30 boxes." },
-      { id: "daeva", t: "Spend Daevanion points as you earn them (Vaizel board at 30, Triniel at 40)." },
-      { id: "skills", t: "Spiritmaster: level Combustion, Elemental Fusion, Summon: Fire Spirit first. Grab the Summon: Ancient Spirit stigma early." }
+      { id: "story", t: "Follow the yellow Main Story quests. Don't grind mobs or farm levelling gear." },
+      { id: "sealed", t: "Sealed Dungeons — Daevanion Crystals for your board + skill points (2 each per dungeon).", n: 61 },
+      { id: "regional", t: "Regional (green) quests — Daevanion Crystals + gear." },
+      { id: "feathers", t: "Empyrean Trace feathers — amulet scrolls, stamina and amplification stone shards (188 total).", n: 188 },
+      { id: "strong", t: "Strongholds — belt scrolls.", n: 15 },
+      { id: "rift", t: "Rift into the enemy faction's zone for their Sealed Dungeons and Strongholds (PvP can be toggled)." },
+      { id: "saveodyle", t: "Save Odyle Energy for level-45 dungeons; don't spend it on level 20/30 boxes." },
+      { id: "anc15", t: "Spiritmaster: get Summon: Ancient Spirit stigma early (see Class notes)." }
     ]
   },
   {
-    id: "il1000", title: "Item level 1,000 → unlock the Abyss", il: 1000,
-    goal: "Collect all the one-time 'free power' and get into the Abyss in your first week at 45.",
-    done: "Item level 1,000, you've entered Lower Reshanta and talked to Koro.",
+    id: "il1000", title: "Item level 1,000 → the Abyss", il: 1000,
+    goal: "Use all your free power and get into the Abyss.",
+    done: "Item level 1,000 and you've entered Lower Reshanta.",
     tasks: [
       { id: "weapon", t: "Finish the Main Story and equip the Spiritforged Unique weapon." },
-      { id: "ascq", t: "Do the Ascension quest 'The One Who Witnesses the Nightmare' (4 steps)." },
-      { id: "rune", t: "Open the Clash Rune box from the green quest and equip the rune (big item level bump)." },
-      { id: "sealed", t: "Clear home-region Sealed Dungeons (2 Daevanion Crystals + 2 Wisdom Stones each).", n: 61 },
-      { id: "usecrystals", t: "Use every Daevanion Crystal (+1 item level each) and every Wisdom Stone." },
-      { id: "strong", t: "Clear Strongholds (belt enhance scrolls).", n: 15 },
-      { id: "traces", t: "Turn in Empyrean Trace feathers at Monoliths (amulet scrolls)." },
-      { id: "ambelt", t: "Amulet to +10, then belt to +10." },
-      { id: "plus5", t: "Most gear to about +5; push the weapon toward +10." },
-      { id: "fill", t: "Fill every empty slot (2nd ring/earring, bracelets, rune) and every socket with cheap Manastones." },
-      { id: "abyss", t: "Enter the Abyss, talk to Koro and claim the Spiritforged Guard." }
+      { id: "ascq", t: "Do the Ascension quest 'The One Who Witnesses the Nightmare'." },
+      { id: "rune", t: "Equip the Clash Rune from the green quest box." },
+      { id: "usecrystals", t: "Use every Daevanion Crystal and Wisdom Stone." },
+      { id: "ambelt", t: "Level the amulet (feather scrolls) and belt (Stronghold scrolls)." },
+      { id: "fill", t: "Fill every empty slot and socket with cheap Manastones." },
+      { id: "abyss", t: "Go straight into the Abyss: grab its feathers and the weekly quests, claim the Spiritforged Guard." }
     ]
   },
   {
-    id: "il1400", title: "Item level 1,400 → Vakron Sky Island & Urugugu Canyon", il: 1400,
-    goal: "Lock in the daily/weekly loop and gear up from Shugo, Nightmare and Draupnir.",
-    done: "Item level 1,400 — tier-2 dungeons open.",
+    id: "il1400", title: "Item level ~1,400 → Vakron Sky Island", il: 1400,
+    goal: "All gear to +10 with Manastones — enough for Vakron (2★ Exploration).",
+    done: "About 1,400 item level.",
     tasks: [
-      { id: "loop", t: "Start doing the Today and This week tabs every reset." },
-      { id: "conq54", t: "Run Conquest at Krao Cave / Draupnir for item level 54 Unique gear." },
-      { id: "nm", t: "Spend Nightmare attempts on the highest tier you can clear (an attempt is only used on a clear)." },
-      { id: "shugo45", t: "Run Shugo Festival at 45 for gold gear, crafting mats and stigma shards." },
-      { id: "order", t: "Enhancement order: Weapon → Guard → Amulet/Belt → everything else cheap." }
+      { id: "plus10", t: "Take every piece to +10." },
+      { id: "mana", t: "Socket Manastones in everything." },
+      { id: "ring", t: "Buy a ring with Abyss Points once you have enough." },
+      { id: "riftloop", t: "Visit the Rift every 3 hours for extra Strongholds and dungeons." },
+      { id: "loop", t: "Start doing the Today and This week tabs every reset." }
     ]
   },
   {
-    id: "il1600", title: "Item level 1,600 → Transcendence ★1", il: 1600,
-    goal: "Swap into item level 70 Unique gear and unlock Transcendence (Arcana).",
-    done: "Item level 1,600 — Deus Research Base and Shattered Arkanis open.",
+    id: "il1600", title: "Full Vakron set → Deus Research Base ★1", il: 1600,
+    goal: "Farm Vakron until you have the full set.",
+    done: "Full Vakron set and 1,600 item level (Transcendence ★1 opens).",
+    video: "https://www.youtube.com/watch?v=HE1MNfy8Zjo",
     tasks: [
-      { id: "vakron", t: "Farm Vakron Sky Island for armor and the Guard (item level 70)." },
-      { id: "urugugu", t: "Farm Urugugu Canyon for weapons and accessories (item level 70)." },
-      { id: "crystals2", t: "Keep buying/using Daevanion Crystals every week." }
+      { id: "vakset", t: "Run Vakron until you have the full set." },
+      { id: "pity", t: "At 7/8 pieces and far from pity, switch to the Expedition version to hit pity." }
     ]
   },
   {
-    id: "il1900", title: "Item level 1,900 → Transcendence ★2", il: 1900,
-    goal: "Finish the Vakron set and start collecting Arcana.",
-    done: "Item level 1,900.",
+    id: "il1920", title: "~1,920 → Deus ★2", il: 1920,
+    goal: "Get every green Arcana card from Deus ★1.",
+    done: "All green cards and about 1,920 item level.",
+    video: "https://www.youtube.com/watch?v=2IRfvEWFvqk",
     tasks: [
-      { id: "vak10", t: "Take the Vakron set to +10." },
-      { id: "t1", t: "Run each ★1 Transcendence boss once and slot grey Arcana (≈ +40 item level)." },
-      { id: "mana", t: "If you're short, upgrade Manastones to close the gap." }
+      { id: "green", t: "Farm Deus ★1 until you have all green cards (blues are a bonus)." },
+      { id: "ambelt2", t: "Level belt and amulet further for extra item level, bulk and damage." }
     ]
   },
   {
-    id: "il2100", title: "Item level 2,100 → Fire Temple & Ferocious Horn Den", il: 2100,
-    goal: "Get your two green Arcana from ★2 Transcendence.",
-    done: "Item level 2,100 — item level 86 dungeons open.",
+    id: "il2190", title: "~2,190 → Kromede & Ferocious Horn Den", il: 2190,
+    goal: "Get every blue Arcana card from Deus ★2 and keep filling your Daevanion board.",
+    done: "All blue cards, main skills at +16, about 2,190 item level.",
     tasks: [
-      { id: "bell", t: "★2 Transcendence until you have Bell of Vigor (green, +40)." },
-      { id: "mirror", t: "★2 Transcendence until you have Mirror of Magic (green, +40)." },
-      { id: "grey", t: "Fill other Arcana slots with grey Compass/Chalice of Magic (+20 each)." }
+      { id: "blue", t: "Farm Deus ★2 until you have all blue cards, ideally with main skills on them." },
+      { id: "skill16", t: "Main skills (Combustion, Elemental Fusion) at level 16+." },
+      { id: "board", t: "Spend Daevanion points: blue/green nodes first, then orange damage nodes." }
+    ]
+  },
+  {
+    id: "il2560", title: "~2,560 → Deus ★3/★4", il: 2560,
+    goal: "Finish accessories in Kromede and armor + Guard in Ferocious Horn Den.",
+    done: "About 2,560 item level — this armor lasts all of Season 1.",
+    video: "https://www.youtube.com/watch?v=lPAX6cNiXO8",
+    tasks: [
+      { id: "kromede", t: "Farm Kromede to finish your accessories." },
+      { id: "kweapon", t: "Can't craft the Splendent Dark Dragon Lord weapon yet? Use the Kromede weapon until you can." },
+      { id: "fhd", t: "Farm Ferocious Horn Den for Guard and armor, all to +10.", link: "https://www.youtube.com/watch?v=4lT8erUBNAM" }
     ]
   },
   {
     id: "il2800", title: "Item level 2,800 → Ludra raid", il: 2800,
-    goal: "Gear up in item level 86 dungeons and higher Transcendence, then find a raid group.",
-    done: "Item level 2,800 (some guides say 2,700 — check in game) and a 10-player group.",
+    goal: "Get yellow Arcana and push enhancement for Ludra.",
+    done: "Ludra-ready gear (some guides list the gate as 2,700 — check in game) and a 10-player group.",
     tasks: [
-      { id: "fire", t: "Farm Fire Temple / Ferocious Horn Den for item level 86 gear." },
-      { id: "t3", t: "Unlock Transcendence ★3 (2,200) and ★4 (2,500) and upgrade Arcana." },
-      { id: "group", t: "Join a Legion or static group for the 10-player raid." }
+      { id: "yellow", t: "Farm Deus ★3 (★4 ideally) for yellow cards with your skills, to get them to level 20." },
+      { id: "wep17", t: "Weapon, Guard and rings to +17." },
+      { id: "acc16", t: "Earrings and necklace to +16." },
+      { id: "arm15", t: "Armor and bracelets to +15." },
+      { id: "runes5", t: "Class runes around +5 (only upgrade spares — runes can break)." },
+      { id: "systems", t: "Keep working on stigma points, skill points, board, soul binding, Genus and Pantheon." }
     ]
   },
   {
@@ -261,7 +284,7 @@ const BREAKPOINTS = [
     done: "Item level 4,500 (Global entry gate).",
     tasks: [
       { id: "ludra", t: "Clear Ludra every week for item level up to 102 gear." },
-      { id: "dragon", t: "Craft Dragon Lord gear (item level 62 → 102) as materials allow." }
+      { id: "dragon", t: "Craft Dragon Lord gear (crafted gear is best in slot: one extra stat line)." }
     ]
   }
 ];
@@ -270,124 +293,195 @@ const BREAKPOINTS = [
 // kind "regen": +amount every `hours` hours. kind "daily": +amount at each daily reset.
 const COUNTERS = [
   { id: "odyle", name: "Odyle Energy", kind: "regen", amount: 15, hours: 3, cap: 560, capSub: 840, spend: [40],
-    tip: "Spend on 40-energy Conquest cubes. 120/day pays for three." },
+    tip: "+120/day. Spend on 40-energy dungeon cubes." },
   { id: "transc", name: "Transcendence rewards", kind: "regen", amount: 1, hours: 12, cap: 14, spend: [1], minIl: 1600,
-    tip: "Unlocks at item level 1,600." },
+    tip: "Deus Research Base / Shattered Arkanis. Unlocks at 1,600." },
   { id: "conquest", name: "Conquest rewards", kind: "regen", amount: 1, hours: 8, cap: 21, spend: [1],
     tip: "Shares a weekly 10-cube limit with Transcendence." },
   { id: "nightmare", name: "Nightmare attempts", kind: "daily", amount: 2, cap: 14, spend: [1],
     tip: "Only used on a clear." },
-  { id: "shugo", name: "Shugo Festival keys", kind: "manual", cap: 14, spend: [1],
-    tip: "Key is only spent if you take the reward. Don't let it sit at 14." }
+  { id: "shugo", name: "Shugo Festival", kind: "daily", amount: 2, cap: 14, spend: [1],
+    tip: "Key is only spent if you take the reward." }
 ];
 
+// From the sheet's "DailyWeeklies" tab.
 const DAILY = [
-  { id: "duty", t: "Duty Missions", n: 5 },
-  { id: "odylecap", t: "Odyle Energy is below the cap" },
-  { id: "shugo", t: "Shugo Festival keys spent (not sitting at 14)" },
-  { id: "nmd", t: "Nightmare attempts spent" }
+  { id: "duty", t: "Duty Quests", n: 5 },
+  { id: "nmd", t: "Nightmare attempts spent (2/day)" },
+  { id: "shugo", t: "Shugo Festival runs (2/day)" },
+  { id: "odylecap", t: "Odyle Energy is below the cap" }
 ];
 
 const WEEKLY = [
   { id: "asc", t: "Ascension Trial (used on entry — pick a difficulty you can finish)", n: 3 },
-  { id: "subj", t: "Subjugation tickets", n: 3 },
-  { id: "morph", t: "Craft Odyle Energy via Substance Morph (40 each)", n: 7 },
-  { id: "crystal", t: "Buy this week's Daevanion Crystals" },
-  { id: "scrolls", t: "Pick up Abyss commander scrolls (reroll for what you need)" },
-  { id: "abyss", t: "Abyss time in Reshanta (up to 7 h per layer)" },
+  { id: "dd", t: "Daily Dungeon entries", n: 14 },
+  { id: "bf", t: "Battlefield", n: 3 },
+  { id: "corr", t: "Abyss Corridors", n: 3 },
+  { id: "siege", t: "Artifact Siege" },
+  { id: "pvew", t: "PvE weekly quests", n: 12 },
+  { id: "pvpw", t: "PvP weekly quests", n: 20 },
+  { id: "morph", t: "Substance Morph / Odyle craft", n: 20 },
+  { id: "subshop", t: "Subscriber Shop purchases" },
   { id: "cubes", t: "Conquest + Transcendence cubes (shared weekly limit)", n: 10 },
-  { id: "raid", t: "Sanctuary raid attempts (Ludra 2,800+)", n: 4, minIl: 2700 },
+  { id: "raid", t: "Sanctuary raid attempts (Ludra)", n: 4, minIl: 2700 },
+  { id: "wb", t: "Optional: World Boss", n: 1 },
   { id: "cube", t: "Always open the reward cube — leaving without it still uses a count" }
 ];
 
+// Spiritmaster page. Main sources: the community sheet's "Spirit Master" tab and
+// SIRIN's Global Spiritmaster guide (linked from the sheet, updated 21 Sep 2026).
 const CLASS_NOTES = `
 <div class="card goalbox">
-<h2>Spiritmaster in one paragraph</h2>
-<p>You win by keeping spirits busy. Each spirit skill gives one element charge. At 4 charges you get <b>Four Elements</b>, which unlocks <b>Elemental Fusion</b>, your biggest hit. Fire Fusion the moment it's up, because you can't build new charges while Four Elements is active. The charges can all be the same element. Strong in PvE (pets and DoTs keep doing damage while you move). Average in PvP: lots of control, but weak against fast divers like Assassin and Ranger.</p>
-<div class="note">Spirits: <b>Water</b> when short on MP · <b>Fire</b> for packs · <b>Earth</b> to pull aggro (it also taunts players) · <b>Wind</b> for healing · <b>Ancient</b> (stigma) is your extra damage spirit.</div>
+<h2>How Spiritmaster works</h2>
+<ul>
+<li>Every basic spirit you summon (Earth, Water, Fire) gives an element. 4 elements → <b>Four Elements</b> → <b>Elemental Fusion</b>. Fire Fusion at once — you can't build elements while Four Elements is up.</li>
+<li><b>Ancient Spirit</b> is most of your damage (90 s cooldown). Each time it uses its skill you also get a free Elemental Fusion.</li>
+<li><b>Buff first, then summon.</b> Benediction / Flame Blessing are snapshotted onto Ancient Spirit when it's summoned.</li>
+<li>Keep <b>Jointstrike: Corrode</b> on the boss — your spirits deal more damage to it.</li>
+<li>Every basic spirit summon also makes <b>Dimensional Control</b> available. Weave Cold Shock, Combustion, Dimensional Control and Jointstrike: Curse in between.</li>
+<li>Cold Shock's 3rd chain hit and the Element Unification passive both stack a buff up to 5 times — keep cycling.</li>
+<li><b>Global note:</b> cooldown reduction is much lower than KR/TW (≈19–21% best-in-slot vs 34–40%), so Ancient Spirit has real downtime. Illusion (CDR) is worth more early on.</li>
+</ul>
 </div>
 
 <div class="card">
-<h2>Build 1 — PvE (default)</h2>
+<h2>Skills</h2>
 <table>
-<tr><th>Skill levels</th><td>
-Take <b>Combustion → Elemental Fusion → Cold Shock</b> to 20 first. Then <b>Summon: Fire Spirit</b>, <b>Spirit Strike</b> and <b>Jointstrike: Curse</b>. Keep most other skills at 20 and spend the rest on specialties.</td></tr>
-<tr><th>Specialties</th><td>
-<b>Cold Shock:</b> +20% MP restored (this fixes your mana).<br>
-<b>Combustion:</b> −20% MP cost, plus more damage on fewer targets. Once your gear is better, swap the first one for +20% Skill Speed.<br>
-<b>Elemental Fusion:</b> extra damage after 3 s.</td></tr>
-<tr><th>Stigmas<br><span class="small muted">Global has 4 slots, unlocking at 22 / 27 / 32 / 37</span></th><td>
-1. <b>Summon: Ancient Spirit</b>. Rank 15 drops its attack interval from 7 s to 5 s, so it's the first one to level.<br>
-2. <b>Enhance: Spirit's Benediction</b> (+20% PvE damage, +20% PvE damage taken reduction, HP regen)<br>
-3. <b>Flame Blessing</b> (your personal damage buff)<br>
-4. <b>Jointstrike: Corrode</b> (DoT, spirit damage +10% on the target)<br>
-<span class="note">Leveling a stigma to rank 20 costs 75 Stigma Shard points (1/2/4/8 per level per block of 5). Shards come from the Abyss Exchange Shop, paid with Abyss Points.</span></td></tr>
-<tr><th>Daevanion</th><td>
-Take skill nodes first: Combustion +1 and Elemental Fusion +1 (Nezekan and Zikel), Spirit Strike +1 (Nezekan), Cold Shock +1 (Zikel). Fill Nezekan, Vaizel and Zikel before going deep into Triniel. Azphel (unlocks at 45) comes last. Top players have about 60/88 on the first three boards.</td></tr>
-<tr><th>Stats</th><td>
-Overall: Smite ≈ Attack increase ≈ Combat Speed &gt; Damage Boost ≈ Weapon Damage Boost &gt; Crit Damage &gt; flat Attack &gt; Crit chance.<br>
-<b>Manastones:</b> Damage Boost &gt; Crit Damage Boost &gt; Front Attack Damage Boost &gt; Attack &gt; Accuracy &gt; Crit. Combat Speed isn't in the manastone pool.<br>
-<b>Soul binding</b> (weapon/guard): Combat Speed, Weapon Damage Boost, Damage Boost, Might. Add Accuracy if your attacks miss.</td></tr>
-<tr><th>Arcana</th><td>
-Parchment: Elemental Fusion, then Fire Spirit · Compass: Combustion · Bell: Spirit Strike, then Element Unification · Mirror: Mental Focus.</td></tr>
+<tr><th>Level 20</th><td><b>Combustion</b>, <b>Elemental Fusion</b> — the only two you need at 20.</td></tr>
+<tr><th>Level 16–20</th><td><b>Cold Shock</b> (20 is optional, nice passive healing), <b>Summon: Fire Spirit</b> (20 optional).</td></tr>
+<tr><th>Level 16</th><td><b>Summon: Water Spirit</b>, <b>Summon: Earth Spirit</b>, <b>Rapid Scattershot</b> (its lvl 16 add-on cuts all cooldowns by 1 s per hit — great early, when CDR is scarce).</td></tr>
+<tr><th>Level 12</th><td>Jointstrike: Curse, Dimensional Control, Soul's Cry, Defiance. <span class="muted">(The sheet goes a bit higher if you have points: Curse 16–20, Dimensional Control 16, Defiance 16.)</span></td></tr>
+<tr><th>Leave at 1</th><td><b>Summon: Wind Spirit</b> — poor damage, long wind-up. Only useful for mobbing.</td></tr>
+<tr><th>Passives</th><td>Push <b>Spirit Strike</b> (damage + perfect) and <b>Mental Focus</b> (smite) as high as gear and Arcana allow. Then <b>Element Unification</b> (crit damage) and <b>Spirit Revitalization</b> (spirit cooldowns). Leave the rest at 14–16.</td></tr>
 </table>
 </div>
 
 <div class="card">
-<h2>Build 2 — PvP / Abyss</h2>
+<h2>Specialties (pick in this order)</h2>
 <table>
-<tr><th>Stigmas</th><td>Run the same four: <b>Ancient Spirit, Spirit's Benediction, Flame Blessing, Corrode</b>. Top KR players run these 93–99% of the time. Corrode at rank 15 also cuts the target's healing by 70%.</td></tr>
-<tr><th>Skills to add</th><td><b>Siphon</b> (drains 300 MP), <b>Seize Magic</b> (strips 2 buffs), <b>Command: Proxy</b>, <b>Soul's Cry</b> (fear), <b>Dimensional Control</b> (root).</td></tr>
-<tr><th>How to fight</th><td>
-• Open with Earth Spirit for the taunt/CC. If that misses or they break it, root with Dimensional Control, then <b>Soul's Cry</b> (fear).<br>
-• Save <b>Corrode</b> for right after they drink a potion or get healed.<br>
-• Use <b>Seize Magic</b> on buffed melee before they reach you.<br>
-• Don't duel Assassins or Rangers in the open. Fight near your group, because your control helps the team most.</td></tr>
+<tr><th>Combustion</th><td>1. Adds <b>[Ashy Call]</b> chain skill · 2. +20% Skill Speed · 3. Up to 12% more damage on fewer targets</td></tr>
+<tr><th>Elemental Fusion</th><td>1. 25% chance to regain Four Elements · 2. Extra damage after 3 s · 3. +10 all Element Boost</td></tr>
+<tr><th>Cold Shock</th><td>1. +2% Attack on landing [Earth Tremor] · 2. +50% Multi-Hit · 3. Absorb 1% HP <span class="muted">(if lvl 20)</span></td></tr>
+<tr><th>Fire Spirit</th><td>1. +20% Fire Spirit crit damage · 2. +20% Fire Spirit stats · 3. 10% chance to activate skill <span class="muted">(if lvl 20 or under 16)</span></td></tr>
+<tr><th>Water Spirit</th><td>1. +10% Water Spirit Attack · 2. +20% Water Spirit stats · 3. 10% chance to activate skill <span class="muted">(if under 16)</span></td></tr>
+<tr><th>Earth Spirit</th><td>1. +20% Earth Spirit stats · 2. 10% chance to activate skill · 3. +20% PvE Damage Tolerance <span class="muted">(if under 16)</span></td></tr>
+<tr><th>Rapid Scattershot</th><td>1. −1 s all skill cooldowns on hit · 2. Multi-Hit on hit</td></tr>
+<tr><th>Dimensional Control</th><td>1. Extra damage after 3 s · 2. +50% Multi-Hit chance</td></tr>
+<tr><th>Jointstrike: Curse</th><td>1. −2 s cooldown · 2. Usable while moving</td></tr>
+<tr><th>Soul's Cry</th><td>1. −10 s cooldown · 2. Usable while moving</td></tr>
+<tr><th>Defiance</th><td>1. Restore 20% HP on use · 2. +2 s Tenacity duration</td></tr>
+<tr><th>Wind Spirit</th><td>Only if you level it: +20% Wind Spirit crit · 10% chance to activate skill</td></tr>
+</table>
+</div>
+
+<div class="card">
+<h2>Stigmas (4 slots on Global, cap level 20)</h2>
+<p class="small muted">A fresh level 45 has 32 Stigma Shards. More come from the Abyss shop (Abyss Points, ≈20/week), Shugo Shop and Nightmare Shop.</p>
+<table>
+<tr><th>Summon: Ancient Spirit</th><td>Your biggest damage source. <b>Get it to 15 ASAP</b> — there's a bug below 15 where it skips its skill and you get no Elemental Fusion from it.</td></tr>
+<tr><th>Enhance: Spirit's Benediction</th><td>Main buff, never leaves your bar. 10 first, then push to 20 (boosts your spirits too if cast before summoning).</td></tr>
+<tr><th>Jointstrike: Corrode</th><td>Spirit damage debuff on the target. All-or-nothing: 5, then straight to 20 (doubles duration → no downtime).</td></tr>
+<tr><th>4th slot</th><td><b>Jointstrike: Destruction</b> (SIRIN's pick — charged skill, #1 stagger, slightly better in testing; keep it at <b>19</b> to dodge a bug where hits get cancelled) <b>or Flame Blessing</b> (the sheet's pick and the KR/TW standard). Siphon is the survivability option.</td></tr>
+</table>
+<table style="margin-top:8px">
+<tr><th></th><td><b>Ancient</b></td><td><b>Corrode</b></td><td><b>Benediction</b></td><td><b>Destruction</b></td></tr>
+<tr><th>Early game</th><td>5</td><td>5</td><td>5</td><td>10</td></tr>
+<tr><th>Mid game</th><td>15</td><td>5</td><td>10</td><td>15</td></tr>
+<tr><th>Late game (to 20, in order)</th><td>2nd</td><td>3rd</td><td>1st</td><td>last (19)</td></tr>
 </table>
 </div>
 
 <div class="card">
 <h2>Macros</h2>
-<p class="small muted">Open the skill window (<b>K</b>) → Macro tab. Set the step delay by ping: under 50 ms ping → 5–10 ms delay · 50–100 → 10–20 ms · 100–150 → 20–30 ms (some players use 40 ms on high ping).</p>
-<h3>Macro A — Opener / burst (one key)</h3>
+<p class="small muted"><b>Setup first:</b> Settings → Gameplay → <b>Macro</b> → bind to <b>Right Mouse Button</b>. Set <b>Separate Special Skill Hotkey</b> to OFF. In the skill window (K) you can stack several skills in one hotbar slot — the slot fires whichever is ready, top first.</p>
+
+<h3>Macro 1 — Simple (from the sheet, no extra software)</h3>
 <ol>
-<li>Enhance: Spirit's Benediction</li>
-<li>Flame Blessing</li>
-<li>Cold Shock</li>
-<li>Summon: Earth Spirit</li>
-<li>Summon: Earth Spirit</li>
-<li>Elemental Fusion</li>
+<li>In-game macro: <b>Summon: Water Spirit</b> → <b>Jointstrike: Curse</b> (10 ms delay each), bound to RMB.</li>
+<li>Press your buff keys 1–3 by hand (Benediction, Flame Blessing / Destruction, Ancient Spirit).</li>
+<li>Then <b>hold Left Click + Right Click</b>. Summon your spirits a few seconds before the pull if you can.</li>
 </ol>
-<p class="small">Use it at the start of a pull and whenever the buffs come back. It buffs, restores MP, builds charges and ends on Fusion.</p>
-<h3>Macro B — Spirit cycle (sustain, 15 steps, 10 ms)</h3>
+
+<h3>Macro 2 — SIRIN's setup (Skill Queue ON)</h3>
+<p class="small">Hotbar layout:</p>
+<table>
+<tr><th>Left click slot</th><td>Cold Shock, with Combustion and Jointstrike: Curse stacked on it</td></tr>
+<tr><th>Right click slot</th><td>Jointstrike: Corrode</td></tr>
+<tr><th>Key 1</th><td>Fire, Water and Earth Spirit stacked, plus Elemental Fusion</td></tr>
+<tr><th>Key 5</th><td>Spirit's Benediction → Flame Blessing (if used) → Ancient Spirit stacked — your "burst" key</td></tr>
+<tr><th>Key 6 / Q / E</th><td>Dimensional Control / Jointstrike: Destruction (hold to charge) / Rapid Scattershot</td></tr>
+</table>
 <ol>
-<li>Cold Shock</li>
-<li>Summon: Earth Spirit</li>
-<li>Dimensional Control</li>
-<li>Enhance: Spirit's Benediction</li>
-<li>Summon: Water Spirit</li>
-<li>Summon: Wind Spirit</li>
-<li>Summon: Fire Spirit</li>
-<li>Combustion</li>
-<li>Elemental Fusion</li>
-<li>Steps 10–15: repeat Cold Shock / spirit summons / Elemental Fusion</li>
+<li>In-game macro: <b>Elemental Fusion → Elemental Fusion → Jointstrike: Corrode</b>, 10 ms each.</li>
+<li>Hold the in-game macro key and Left Click together.</li>
+<li>Press key 5 for buffs + Ancient Spirit whenever it's up — holding the macro can eat manual presses, so tap it firmly.</li>
 </ol>
-<p class="small">Skills on cooldown are skipped, so the macro just fires whatever is ready. Late game, swap Wind Spirit for Ancient Spirit.</p>
-<h3>Manual rotation</h3>
-<p class="small">Flame Blessing + Benediction → DoTs (Combustion, Corrode) → cycle spirits for 4 charges → <b>Fusion right away</b> → Cold Shock filler for MP → repeat.</p>
+<p class="note">SIRIN's "Skill Queue OFF" option loops these keys with Razer software (Cold Shock slot, macro, Corrode, Destruction, Dimensional Control at 1 ms gaps). External macro software may break the game's rules — check before using it. Raise the in-game delays if your ping is high or your FPS drops.</p>
+</div>
+
+<details class="card">
+<summary><h2 style="display:inline">Gear, stats and Arcana</h2> <span class="muted small">(click to open)</span></summary>
+<p class="small muted">Global halved most stats from KR/TW: Divine stats are now 10 points = 1%. Crafted gear is best in slot (one extra stat line).</p>
+<table>
+<tr><th>Soul binding: weapon</th><td>Weapon Damage Boost &gt; Combat Speed &gt; Might &gt; Precision &gt; Damage Boost &gt; Multi-Hit &gt; Attack</td></tr>
+<tr><th>Soul binding: guard</th><td>Weapon Damage Boost &gt; Combat Speed &gt; Damage Boost &gt; Might &gt; Precision &gt; Multi-Hit &gt; Attack</td></tr>
+<tr><th>Helmet</th><td>Incoming Heal &gt; Spirit Strike &gt; Mental Focus &gt; Double Chance &gt; Attack increase &gt; Crit &gt; Attack</td></tr>
+<tr><th>Shoulders</th><td>Crit Damage Boost &gt; Spirit Strike &gt; Mental Focus &gt; Accuracy &gt; Crit &gt; Attack</td></tr>
+<tr><th>Chest</th><td>Damage Boost &gt; Spirit Strike &gt; Mental Focus &gt; Crit &gt; Accuracy &gt; Attack</td></tr>
+<tr><th>Legs</th><td>Damage Tolerance &gt; Spirit Strike &gt; Mental Focus &gt; Perfect &gt; Attack increase &gt; Crit</td></tr>
+<tr><th>Gloves / Boots</th><td>Speed &gt; Spirit Strike &gt; Mental Focus &gt; Perfect Chance &gt; Crit &gt; Attack</td></tr>
+<tr><th>Cape</th><td>Wind's Promise &gt; Impact Hit &gt; Smite &gt; Perfect Chance &gt; Attack increase &gt; Crit</td></tr>
+<tr><th>Earrings / Necklace</th><td>Spirit Strike &gt; Mental Focus &gt; Might &gt; Precision &gt; Accuracy &gt; Crit &gt; Attack</td></tr>
+<tr><th>Rings</th><td>Elemental Fusion &gt; Combustion &gt; Curse &gt; Might &gt; Precision &gt; Fire Spirit &gt; Water Spirit</td></tr>
+<tr><th>Bracelets (Divine)</th><td>Wisdom &gt; Destruction &gt; Time &gt; Illusion &gt; Death &gt; Justice</td></tr>
+<tr><th>Manastones</th><td>Weapon Damage Boost ≈ Crit Damage Boost &gt; Damage Boost &gt; Attack. Early on just take Attack + Crit/Accuracy.</td></tr>
+<tr><th>Enhancing priority</th><td>Double Chance bonuses &gt; Weapon Damage Boost &gt; Damage Boost &gt; Attack &gt; Accuracy / Crit</td></tr>
+</table>
+<h3>Arcana</h3>
+<table>
+<tr><th>Chalice of Vigor (Time)</th><td>Elemental Fusion, Combustion, Spirit Strike, Mental Focus</td></tr>
+<tr><th>Parchment of Vigor (Life)</th><td>Elemental Fusion, Curse, Fire Spirit, Cold Shock</td></tr>
+<tr><th>Compass of Magic (Death or Freedom)</th><td>Combustion, Water Spirit (or Rapid Scattershot)</td></tr>
+<tr><th>Bell of Magic (Destruction)</th><td>Spirit Strike, Element Unification, Spirit Revitalization</td></tr>
+<tr><th>Mirror (Illusion early / Wisdom later)</th><td>Mental Focus, Corrode</td></tr>
+</table>
+<h3>Daevanion board</h3>
+<p class="small">A fresh 45 with every Sealed Dungeon and side quest has about 507 points (+50 from the Shugo Festival shop). Take all <b>blue and green</b> nodes first, then <b>orange</b> damage nodes (Combat Speed, CDR, Damage Boost, Crit Damage, Multi-Hit), then white nodes. Global has no Ariel board.</p>
+<h3>Other systems</h3>
+<table>
+<tr><th>Wings</th><td>Equip Eroded early (Vakron cube drop). End goal: <b>Talisra</b> from the Season Shop — the best CDR source.</td></tr>
+<tr><th>Titles</th><td>Offensive: Playing God &gt; Unbound Genus &gt; Guardian of Verteron. Defensive: Saint of Verteron.</td></tr>
+<tr><th>Pantheon</th><td>Colossus from the Nightmare shop. Statues: Freedom, Death, Space. Paintings: Illusion and Wisdom, then Life.</td></tr>
+<tr><th>Genus Insight</th><td>Line 4 is the money line: Double Chance (Special) / Damage Boost (others). Don't lock anything before insight level 9.</td></tr>
+</table>
+</details>
+
+<div class="card">
+<h2>PvP / Abyss</h2>
+<ul>
+<li>Benediction and Ancient Spirit are non-negotiable. Fill the other 2: <b>Corrode + Destruction</b> (burst — Corrode → Destruction → Corrode), <b>Siphon + Command: Proxy</b> (tanky), or <b>Seize Magic / Magic Block</b> (buff strip + seal).</li>
+<li>Fear (Soul's Cry) gets Defianced — it's fine early when nobody has status resist, weak later.</li>
+<li><b>Earth Spirit's taunt</b> can't be Defianced: a taunted player runs at the spirit and can't act. That's your best CC.</li>
+<li>Gear for PvE first and spend early Abyss Points on stigma shards.</li>
+</ul>
 </div>
 
 <div class="card">
 <h2>How to reset</h2>
 <table>
-<tr><th>Skill points</th><td><b>Free and unlimited.</b> Press <b>K</b> and click the circular reset button next to the skill point counter, then confirm. All skill points come back. Skill levels from Daevanion nodes, Arcana and gear stay where they are.</td></tr>
-<tr><th>Ancestry skills</th><td>The 4 skills from the red level-25 Ancestry quest cost <b>Kinah</b> to reset.</td></tr>
-<tr><th>Stigmas</th><td>Resetting a stigma refunds its Shard points. Check the cost in the confirm window (KR removed the fee later; Global may differ). You can't swap stigmas in combat.</td></tr>
-<tr><th>Daevanion</th><td>KR/TW let you refund a single node for a Kinah fee (500 each there). Global's price and rules aren't confirmed, and some guides say Global nodes can't be refunded. <b>Read the confirm window before you click</b>, and plan nodes before you spend.</td></tr>
+<tr><th>Skill points</th><td><b>Free and unlimited.</b> Press <b>K</b>, click the circular reset button next to the skill point counter, confirm. Levels from Daevanion, Arcana and gear stay.</td></tr>
+<tr><th>Stigmas</th><td>Resetting stigma levels should be free (per SIRIN). It refunds the Shard points. You can't swap stigmas in combat.</td></tr>
+<tr><th>Ancestry skills</th><td>The 4 skills from the red level-25 Ancestry quest cost Kinah to reset.</td></tr>
+<tr><th>Daevanion</th><td>KR/TW refund single nodes for a Kinah fee. Global rules aren't confirmed — read the confirm window, and plan nodes before spending.</td></tr>
 <tr><th>Keybinds</th><td>Settings (cog) → Key Settings. Each tab has its own Reset button.</td></tr>
 </table>
 </div>
-<p class="note">Reference sheet: <a href="https://docs.google.com/spreadsheets/d/1lbHaVairHaz26M8XGNF9CBWqiiHHBM6CylTwNKnlOug/htmlview" target="_blank" rel="noopener">Aion 2 community spreadsheet</a>.<br>Sources: game8, metabot, allthings.how, sportskeeda, mmo-codex, wikily.gg (top-player node data), mmoherald (stat weights), vortexgaming, expcarry. Numbers are from early Oct 2026 and can change after a patch. Edit <code>CLASS_NOTES</code> in index.html to change this page.</p>`;
+
+<p class="note">Sources: <a href="${SHEET}" target="_blank" rel="noopener">community sheet</a> (Spirit Master, Roadmap and DailyWeeklies tabs) ·
+<a href="${SM_GUIDE}" target="_blank" rel="noopener">SIRIN's Global Spiritmaster guide</a> ·
+<a href="https://aion2-elementalist-guide.netlify.app/" target="_blank" rel="noopener">Elementalist guide</a> ·
+<a href="https://questlog.gg/aion-2/en/skill-builder" target="_blank" rel="noopener">questlog skill builder</a>.
+Numbers can change after a patch — edit <code>CLASS_NOTES</code> in index.html.</p>`;
 
 /* =====================================================================
    STATE
@@ -502,6 +596,7 @@ function setCounter(c, value) {
    ===================================================================== */
 const $ = id => document.getElementById(id);
 const esc = s => String(s).replace(/[&<>"]/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[ch]));
+const linkHtml = (url, label) => url ? ` <a href="${esc(url)}" target="_blank" rel="noopener">${label}</a>` : "";
 
 function bpCleared(bp) { return bp.gate === "level" ? S.lv45 : S.il >= bp.il; }
 function currentBp() { return BREAKPOINTS.find(bp => !bpCleared(bp)) || null; }
@@ -512,7 +607,7 @@ function taskRow(key, task, store, onChange) {
   if (task.n) {
     const n = val || 0;
     if (n >= task.n) li.className = "done";
-    li.innerHTML = `<span class="t">${esc(task.t)}</span>
+    li.innerHTML = `<span class="t">${esc(task.t)}${linkHtml(task.link, "▶ video")}</span>
       <span class="cnt"><button class="b" data-d="-1">−</button><span>${n} / ${task.n}</span><button class="b" data-d="1">+</button></span>`;
     li.querySelectorAll("button").forEach(b => b.onclick = e => {
       e.stopPropagation();
@@ -521,7 +616,7 @@ function taskRow(key, task, store, onChange) {
     });
   } else {
     if (val) li.className = "done";
-    li.innerHTML = `<input type="checkbox" ${val ? "checked" : ""}><span class="t">${esc(task.t)}</span>`;
+    li.innerHTML = `<input type="checkbox" ${val ? "checked" : ""}><span class="t">${esc(task.t)}${linkHtml(task.link, "▶ video")}</span>`;
     const cb = li.querySelector("input");
     cb.onclick = e => e.stopPropagation();
     cb.onchange = () => { store[key] = cb.checked; onChange(); };
@@ -571,7 +666,7 @@ function renderRoadmap() {
         <div><span class="muted small">Breakpoint ${i + 1}</span><h3>${cleared ? "✔ " : ""}${esc(b.title)}</h3>
         <div class="small muted">Goal: ${esc(b.goal)}</div></div>
         <span class="pill">${done}/${b.tasks.length}</span></div>
-      <div class="body"><div class="small"><b>Done when:</b> ${esc(b.done)}</div><ul class="check"></ul></div>`;
+      <div class="body"><div class="small"><b>Done when:</b> ${esc(b.done)}${linkHtml(b.video, "▶ Guide video")}</div><ul class="check"></ul></div>`;
     const ul = card.querySelector("ul");
     b.tasks.forEach(t => ul.appendChild(taskRow(b.id + "." + t.id, t, S.bpTasks, () => { save(); renderRoadmap(); })));
     card.querySelector(".head").onclick = () => { S.openBp = b.id === openId ? "none" : b.id; save(); renderRoadmap(); };
