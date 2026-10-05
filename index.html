@@ -1,0 +1,615 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Aion 2 Tracker</title>
+<style>
+:root{
+  --bg:#0f1115;--panel:#171a21;--panel2:#1e222b;--line:#2a2f3a;
+  --text:#e6e8ec;--muted:#9aa1ad;--accent:#6aa9ff;
+  --ok:#3fb950;--warn:#d29922;--bad:#f85149;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:14px/1.5 "Segoe UI",system-ui,sans-serif}
+header{position:sticky;top:0;z-index:5;background:var(--panel);border-bottom:1px solid var(--line);padding:12px 20px}
+.wrap{max-width:980px;margin:0 auto}
+.top{display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between}
+h1{font-size:18px;margin:0}
+h2{font-size:16px;margin:0 0 4px}
+h3{font-size:14px;margin:0}
+.muted{color:var(--muted)}
+.small{font-size:12px}
+.pill{display:inline-block;padding:2px 8px;border-radius:999px;background:var(--panel2);border:1px solid var(--line);font-size:12px}
+.timers{display:flex;gap:10px;flex-wrap:wrap}
+nav{display:flex;gap:4px;margin-top:10px;flex-wrap:wrap}
+nav button{background:none;border:0;color:var(--muted);padding:6px 12px;border-radius:6px;cursor:pointer;font:inherit}
+nav button.on{background:var(--panel2);color:var(--text)}
+main{padding:20px}
+section{display:none}
+section.on{display:block}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:12px}
+.goalbox{border-left:3px solid var(--accent)}
+.bar{height:8px;background:var(--panel2);border-radius:99px;overflow:hidden;margin:8px 0}
+.bar>i{display:block;height:100%;background:var(--accent)}
+input[type=number],input[type=text],select{background:var(--panel2);border:1px solid var(--line);color:var(--text);border-radius:6px;padding:5px 8px;font:inherit}
+input[type=number]{width:90px}
+button.b{background:var(--panel2);border:1px solid var(--line);color:var(--text);border-radius:6px;padding:4px 10px;cursor:pointer;font:inherit}
+button.b:hover{border-color:var(--accent)}
+button.primary{background:var(--accent);border-color:var(--accent);color:#08111f}
+ul.check{list-style:none;padding:0;margin:8px 0 0}
+ul.check li{display:flex;gap:10px;align-items:flex-start;padding:6px 0;border-top:1px solid var(--line)}
+ul.check li:first-child{border-top:0}
+ul.check li.done .t{color:var(--muted);text-decoration:line-through}
+ul.check input[type=checkbox]{margin-top:3px;width:16px;height:16px;accent-color:var(--accent)}
+.t{flex:1}
+.cnt{display:flex;gap:4px;align-items:center;white-space:nowrap}
+.cnt span{min-width:54px;text-align:center}
+.bp{cursor:pointer}
+.bp .head{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.bp .body{display:none;margin-top:8px}
+.bp.open .body{display:block}
+.bp.current{border-color:var(--accent)}
+.bp.cleared{opacity:.6}
+.tag-ok{color:var(--ok)}.tag-warn{color:var(--warn)}.tag-bad{color:var(--bad)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.ctr .val{font-size:22px;font-weight:600}
+.ctr .row{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:8px}
+.ctr.bad{border-color:var(--bad)}.ctr.warn{border-color:var(--warn)}
+table{width:100%;border-collapse:collapse}
+td,th{text-align:left;padding:6px 4px;border-top:1px solid var(--line);vertical-align:top}
+.note{font-size:12px;color:var(--muted);margin-top:6px}
+a{color:var(--accent)}
+@media (max-width:600px){main{padding:12px}header{padding:10px 12px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="top">
+      <div>
+        <h1>Aion 2 Progress Tracker</h1>
+        <div class="muted small" id="charline"></div>
+      </div>
+      <div class="timers">
+        <span class="pill">Daily reset in <b id="dailyIn">–</b></span>
+        <span class="pill">Weekly reset in <b id="weeklyIn">–</b></span>
+      </div>
+    </div>
+    <nav id="nav">
+      <button data-tab="roadmap" class="on">Roadmap</button>
+      <button data-tab="today">Today</button>
+      <button data-tab="week">This week</button>
+      <button data-tab="notes">Class notes</button>
+      <button data-tab="settings">Settings</button>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- ROADMAP -->
+  <section id="roadmap" class="on">
+    <div class="card goalbox">
+      <div class="muted small">CURRENT GOAL</div>
+      <h2 id="goalTitle"></h2>
+      <div id="goalText"></div>
+      <div class="bar"><i id="goalBar" style="width:0"></i></div>
+      <div class="small muted" id="goalProgress"></div>
+      <div style="margin-top:10px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <label>My item level <input type="number" id="ilInput" min="0" step="10"></label>
+        <label><input type="checkbox" id="lv45"> Character is level 45</label>
+      </div>
+    </div>
+    <div id="bpList"></div>
+  </section>
+
+  <!-- TODAY -->
+  <section id="today">
+    <div class="card">
+      <h2>Daily checklist</h2>
+      <div class="muted small">Clears itself at the daily reset.</div>
+      <ul class="check" id="dailyList"></ul>
+    </div>
+    <h2 style="margin:18px 0 8px">Banked counters</h2>
+    <div class="muted small" style="margin-bottom:10px">Type the number you see in game and press <b>Set</b>. The tracker keeps counting up on its own, so you can see what will cap first. Red = full or full within 6 h.</div>
+    <div class="grid" id="ctrGrid"></div>
+  </section>
+
+  <!-- WEEK -->
+  <section id="week">
+    <div class="card">
+      <h2>Weekly checklist</h2>
+      <div class="muted small">Clears itself at the weekly reset (Wednesday).</div>
+      <ul class="check" id="weeklyList"></ul>
+    </div>
+  </section>
+
+  <!-- NOTES -->
+  <section id="notes">
+    <div class="card" id="notesCard"></div>
+  </section>
+
+  <!-- SETTINGS -->
+  <section id="settings">
+    <div class="card">
+      <h2>Character</h2>
+      <table>
+        <tr><td>Name</td><td><input type="text" id="sName"></td></tr>
+        <tr><td>Class</td><td><input type="text" id="sClass"></td></tr>
+        <tr><td>Server region</td><td>
+          <select id="sRegion">
+            <option value="America/New_York">NA East (New York time)</option>
+            <option value="America/Los_Angeles">NA West (Los Angeles time)</option>
+            <option value="Europe/Berlin">Europe (Berlin time)</option>
+            <option value="Asia/Seoul">Korea (Seoul time)</option>
+          </select>
+          <div class="note">Resets happen at 09:00 server time. Weekly reset is Wednesday.</div>
+        </td></tr>
+        <tr><td>Reset hour</td><td><input type="number" id="sHour" min="0" max="23"> <span class="muted small">server time, 0–23</span></td></tr>
+        <tr><td>Subscription</td><td><label><input type="checkbox" id="sSub"> Active (Odyle Energy cap 840 instead of 560)</label></td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h2>Backup</h2>
+      <div class="muted small">Progress is saved in this browser only. Export a backup now and then, or before you clear your browser data.</div>
+      <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+        <button class="b primary" id="exportBtn">Export backup</button>
+        <button class="b" id="importBtn">Import backup</button>
+        <input type="file" id="importFile" accept="application/json" hidden>
+        <button class="b" id="wipeBtn">Reset everything</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+/* =====================================================================
+   GAME DATA — edit this block when a patch changes numbers.
+   Sources: Global-client guides and community posts, early Oct 2026.
+   ===================================================================== */
+const BREAKPOINTS = [
+  {
+    id: "lv45", title: "Reach level 45", gate: "level",
+    goal: "Hit the level cap fast, with your Odyle Energy saved for endgame.",
+    done: "Your character is level 45.",
+    tasks: [
+      { id: "story", t: "Follow the yellow Main Story quests. When it stalls: green Regional quests → nearby Sealed Dungeons → back to story." },
+      { id: "nogrind", t: "Don't grind mobs and don't farm perfect levelling gear." },
+      { id: "lv22", t: "Push to level 22 on day 1 — that's where Odyle Energy starts generating." },
+      { id: "saveodyle", t: "Save Odyle Energy for level-45 Expeditions/Conquest. Don't spend it on level 20/30 boxes." },
+      { id: "daeva", t: "Spend Daevanion points as you earn them (Vaizel board at 30, Triniel at 40)." },
+      { id: "skills", t: "Spiritmaster: level Combustion, Elemental Fusion, Summon: Fire Spirit first. Grab the Summon: Ancient Spirit stigma early." }
+    ]
+  },
+  {
+    id: "il1000", title: "Item level 1,000 → unlock the Abyss", il: 1000,
+    goal: "Collect all the one-time 'free power' and get into the Abyss in your first week at 45.",
+    done: "Item level 1,000, you've entered Lower Reshanta and talked to Koro.",
+    tasks: [
+      { id: "weapon", t: "Finish the Main Story and equip the Spiritforged Unique weapon." },
+      { id: "ascq", t: "Do the Ascension quest 'The One Who Witnesses the Nightmare' (4 steps)." },
+      { id: "rune", t: "Open the Clash Rune box from the green quest and equip the rune (big item level bump)." },
+      { id: "sealed", t: "Clear home-region Sealed Dungeons (2 Daevanion Crystals + 2 Wisdom Stones each).", n: 61 },
+      { id: "usecrystals", t: "Use every Daevanion Crystal (+1 item level each) and every Wisdom Stone." },
+      { id: "strong", t: "Clear Strongholds (belt enhance scrolls).", n: 15 },
+      { id: "traces", t: "Turn in Empyrean Trace feathers at Monoliths (amulet scrolls)." },
+      { id: "ambelt", t: "Amulet to +10, then belt to +10." },
+      { id: "plus5", t: "Most gear to about +5; push the weapon toward +10." },
+      { id: "fill", t: "Fill every empty slot (2nd ring/earring, bracelets, rune) and every socket with cheap Manastones." },
+      { id: "abyss", t: "Enter the Abyss, talk to Koro and claim the Spiritforged Guard." }
+    ]
+  },
+  {
+    id: "il1400", title: "Item level 1,400 → Vakron Sky Island & Urugugu Canyon", il: 1400,
+    goal: "Lock in the daily/weekly loop and gear up from Shugo, Nightmare and Draupnir.",
+    done: "Item level 1,400 — tier-2 dungeons open.",
+    tasks: [
+      { id: "loop", t: "Start doing the Today and This week tabs every reset." },
+      { id: "conq54", t: "Run Conquest at Krao Cave / Draupnir for item level 54 Unique gear." },
+      { id: "nm", t: "Spend Nightmare attempts on the highest tier you can clear (an attempt is only used on a clear)." },
+      { id: "shugo45", t: "Run Shugo Festival at 45 for gold gear, crafting mats and stigma shards." },
+      { id: "order", t: "Enhancement order: Weapon → Guard → Amulet/Belt → everything else cheap." }
+    ]
+  },
+  {
+    id: "il1600", title: "Item level 1,600 → Transcendence ★1", il: 1600,
+    goal: "Swap into item level 70 Unique gear and unlock Transcendence (Arcana).",
+    done: "Item level 1,600 — Deus Research Base and Shattered Arkanis open.",
+    tasks: [
+      { id: "vakron", t: "Farm Vakron Sky Island for armor and the Guard (item level 70)." },
+      { id: "urugugu", t: "Farm Urugugu Canyon for weapons and accessories (item level 70)." },
+      { id: "crystals2", t: "Keep buying/using Daevanion Crystals every week." }
+    ]
+  },
+  {
+    id: "il1900", title: "Item level 1,900 → Transcendence ★2", il: 1900,
+    goal: "Finish the Vakron set and start collecting Arcana.",
+    done: "Item level 1,900.",
+    tasks: [
+      { id: "vak10", t: "Take the Vakron set to +10." },
+      { id: "t1", t: "Run each ★1 Transcendence boss once and slot grey Arcana (≈ +40 item level)." },
+      { id: "mana", t: "If you're short, upgrade Manastones to close the gap." }
+    ]
+  },
+  {
+    id: "il2100", title: "Item level 2,100 → Fire Temple & Ferocious Horn Den", il: 2100,
+    goal: "Get your two green Arcana from ★2 Transcendence.",
+    done: "Item level 2,100 — item level 86 dungeons open.",
+    tasks: [
+      { id: "bell", t: "★2 Transcendence until you have Bell of Vigor (green, +40)." },
+      { id: "mirror", t: "★2 Transcendence until you have Mirror of Magic (green, +40)." },
+      { id: "grey", t: "Fill other Arcana slots with grey Compass/Chalice of Magic (+20 each)." }
+    ]
+  },
+  {
+    id: "il2800", title: "Item level 2,800 → Ludra raid", il: 2800,
+    goal: "Gear up in item level 86 dungeons and higher Transcendence, then find a raid group.",
+    done: "Item level 2,800 (some guides say 2,700 — check in game) and a 10-player group.",
+    tasks: [
+      { id: "fire", t: "Farm Fire Temple / Ferocious Horn Den for item level 86 gear." },
+      { id: "t3", t: "Unlock Transcendence ★3 (2,200) and ★4 (2,500) and upgrade Arcana." },
+      { id: "group", t: "Join a Legion or static group for the 10-player raid." }
+    ]
+  },
+  {
+    id: "il4500", title: "Item level 4,500 → Chalice of Muspel", il: 4500,
+    goal: "Clear Ludra weekly and climb to the top raid.",
+    done: "Item level 4,500 (Global entry gate).",
+    tasks: [
+      { id: "ludra", t: "Clear Ludra every week for item level up to 102 gear." },
+      { id: "dragon", t: "Craft Dragon Lord gear (item level 62 → 102) as materials allow." }
+    ]
+  }
+];
+
+// Counters that refill over time and bank up to a cap.
+// kind "regen": +amount every `hours` hours. kind "daily": +amount at each daily reset.
+const COUNTERS = [
+  { id: "odyle", name: "Odyle Energy", kind: "regen", amount: 15, hours: 3, cap: 560, capSub: 840, spend: [40],
+    tip: "Spend on 40-energy Conquest cubes. 120/day pays for three." },
+  { id: "transc", name: "Transcendence rewards", kind: "regen", amount: 1, hours: 12, cap: 14, spend: [1], minIl: 1600,
+    tip: "Unlocks at item level 1,600." },
+  { id: "conquest", name: "Conquest rewards", kind: "regen", amount: 1, hours: 8, cap: 21, spend: [1],
+    tip: "Shares a weekly 10-cube limit with Transcendence." },
+  { id: "nightmare", name: "Nightmare attempts", kind: "daily", amount: 2, cap: 14, spend: [1],
+    tip: "Only used on a clear." },
+  { id: "shugo", name: "Shugo Festival keys", kind: "manual", cap: 14, spend: [1],
+    tip: "Key is only spent if you take the reward. Don't let it sit at 14." }
+];
+
+const DAILY = [
+  { id: "duty", t: "Duty Missions", n: 5 },
+  { id: "odylecap", t: "Odyle Energy is below the cap" },
+  { id: "shugo", t: "Shugo Festival keys spent (not sitting at 14)" },
+  { id: "nmd", t: "Nightmare attempts spent" }
+];
+
+const WEEKLY = [
+  { id: "asc", t: "Ascension Trial (used on entry — pick a difficulty you can finish)", n: 3 },
+  { id: "subj", t: "Subjugation tickets", n: 3 },
+  { id: "morph", t: "Craft Odyle Energy via Substance Morph (40 each)", n: 7 },
+  { id: "crystal", t: "Buy this week's Daevanion Crystals" },
+  { id: "scrolls", t: "Pick up Abyss commander scrolls (reroll for what you need)" },
+  { id: "abyss", t: "Abyss time in Reshanta (up to 7 h per layer)" },
+  { id: "cubes", t: "Conquest + Transcendence cubes (shared weekly limit)", n: 10 },
+  { id: "raid", t: "Sanctuary raid attempts (Ludra 2,800+)", n: 4, minIl: 2700 },
+  { id: "cube", t: "Always open the reward cube — leaving without it still uses a count" }
+];
+
+const CLASS_NOTES = `
+<h2>Spiritmaster cheat sheet</h2>
+<ul>
+<li>Each spirit skill gives 1 charge. 4 charges → <b>Four Elements</b> → fire <b>Elemental Fusion</b> right away. The charges can all be the same element.</li>
+<li><b>Never hold Fusion</b> — you can't build new charges while Four Elements is up.</li>
+<li>Water Spirit when short on MP · Fire Spirit for packs · Earth Spirit to pull aggro · Wind Spirit for healing.</li>
+<li>Skill order: Combustion → Elemental Fusion → Cold Shock → Summon: Fire Spirit → Jointstrike: Curse. Stop most skills at 20 and unlock specialties.</li>
+<li>Stigma order: Summon: Ancient Spirit (aim for rank 15) → Spirit's Benediction → Corrode or Flame Blessing.</li>
+<li>Rotation: Flame Blessing + Spirit's Benediction → DoTs → cycle spirits for charges → Fusion the moment it's up.</li>
+<li>Starter macro: Benediction → Flame Blessing → Cold Shock → Earth Spirit ×2 → Elemental Fusion.</li>
+</ul>
+<p class="note">Edit <code>CLASS_NOTES</code> in index.html to change this page.</p>`;
+
+/* =====================================================================
+   STATE
+   ===================================================================== */
+const KEY = "aion2tracker.v1";
+const DEFAULT_STATE = {
+  name: "", cls: "Spiritmaster", region: "America/New_York", resetHour: 9, sub: false,
+  il: 0, lv45: false,
+  bpTasks: {},            // "bpId.taskId" -> true | number
+  counters: {},           // id -> { value, at }
+  daily: { key: 0, done: {} },
+  weekly: { key: 0, done: {} },
+  openBp: null
+};
+let S = load();
+
+function load() {
+  try {
+    const raw = localStorage.getItem(KEY);
+    return raw ? Object.assign(structuredClone(DEFAULT_STATE), JSON.parse(raw)) : structuredClone(DEFAULT_STATE);
+  } catch { return structuredClone(DEFAULT_STATE); }
+}
+function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch {} }
+
+/* =====================================================================
+   TIME — resets happen at resetHour in the server's time zone
+   ===================================================================== */
+const HOUR = 3600e3, DAY = 24 * HOUR;
+
+// Offset (ms) of time zone tz from UTC at the given instant.
+function tzOffset(tz, at) {
+  const p = Object.fromEntries(new Intl.DateTimeFormat("en-US", {
+    timeZone: tz, hourCycle: "h23", year: "numeric", month: "2-digit", day: "2-digit",
+    hour: "2-digit", minute: "2-digit", second: "2-digit"
+  }).formatToParts(at).map(x => [x.type, x.value]));
+  const asUtc = Date.UTC(+p.year, +p.month - 1, +p.day, +p.hour, +p.minute, +p.second);
+  return asUtc - Math.floor(at / 1000) * 1000;
+}
+// Instant of resetHour:00 server time on the server-calendar day containing `at`, shifted by dayShift days.
+function resetOnDay(at, dayShift) {
+  const tz = S.region, off = tzOffset(tz, at);
+  const local = new Date(at + off);
+  const guess = Date.UTC(local.getUTCFullYear(), local.getUTCMonth(), local.getUTCDate() + dayShift, S.resetHour);
+  return guess - tzOffset(tz, guess - off);
+}
+function lastDailyReset(now) {
+  let r = resetOnDay(now, 0);
+  return r > now ? resetOnDay(now, -1) : r;
+}
+function nextDailyReset(now) {
+  const r = resetOnDay(now, 0);
+  return r > now ? r : resetOnDay(now, 1);
+}
+function serverWeekday(at) {
+  return new Date(at + tzOffset(S.region, at)).getUTCDay(); // 0=Sun … 3=Wed
+}
+function lastWeeklyReset(now) {
+  let r = lastDailyReset(now);
+  for (let i = 0; i < 8 && serverWeekday(r) !== 3; i++) r = lastDailyReset(r - HOUR);
+  return r;
+}
+function nextWeeklyReset(now) {
+  let r = nextDailyReset(now);
+  for (let i = 0; i < 8 && serverWeekday(r) !== 3; i++) r = nextDailyReset(r + HOUR);
+  return r;
+}
+function dailyResetsBetween(from, to) {
+  let n = 0, r = lastDailyReset(to);
+  while (r > from && n < 60) { n++; r = lastDailyReset(r - HOUR); }
+  return n;
+}
+function fmtDur(ms) {
+  if (ms <= 0) return "now";
+  const m = Math.round(ms / 60e3), d = Math.floor(m / 1440), h = Math.floor((m % 1440) / 60), mm = m % 60;
+  return d ? `${d}d ${h}h` : h ? `${h}h ${mm}m` : `${mm}m`;
+}
+
+/* =====================================================================
+   COUNTERS — store a snapshot, compute the current value
+   ===================================================================== */
+function capOf(c) { return S.sub && c.capSub ? c.capSub : c.cap; }
+function counterNow(c, now) {
+  const snap = S.counters[c.id];
+  if (!snap) return null;
+  let v = snap.value;
+  if (c.kind === "regen") v += Math.floor((now - snap.at) / (c.hours * HOUR)) * c.amount;
+  if (c.kind === "daily") v += dailyResetsBetween(snap.at, now) * c.amount;
+  return Math.min(capOf(c), Math.max(0, v));
+}
+function timeToCap(c, now) {
+  const v = counterNow(c, now), cap = capOf(c);
+  if (v === null || c.kind === "manual") return Infinity;
+  if (v >= cap) return 0;
+  const need = Math.ceil((cap - v) / c.amount);
+  if (c.kind === "regen") {
+    const snap = S.counters[c.id];
+    const ticks = Math.floor((now - snap.at) / (c.hours * HOUR));
+    return snap.at + (ticks + need) * c.hours * HOUR - now;
+  }
+  let r = now;
+  for (let i = 0; i < need; i++) r = nextDailyReset(r);
+  return r - now;
+}
+function setCounter(c, value) {
+  const now = Date.now();
+  S.counters[c.id] = { value: Math.max(0, Math.min(capOf(c), value)), at: now };
+  save(); renderToday();
+}
+
+/* =====================================================================
+   RENDER
+   ===================================================================== */
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[ch]));
+
+function bpCleared(bp) { return bp.gate === "level" ? S.lv45 : S.il >= bp.il; }
+function currentBp() { return BREAKPOINTS.find(bp => !bpCleared(bp)) || null; }
+
+function taskRow(key, task, store, onChange) {
+  const val = store[key];
+  const li = document.createElement("li");
+  if (task.n) {
+    const n = val || 0;
+    if (n >= task.n) li.className = "done";
+    li.innerHTML = `<span class="t">${esc(task.t)}</span>
+      <span class="cnt"><button class="b" data-d="-1">−</button><span>${n} / ${task.n}</span><button class="b" data-d="1">+</button></span>`;
+    li.querySelectorAll("button").forEach(b => b.onclick = e => {
+      e.stopPropagation();
+      store[key] = Math.max(0, Math.min(task.n, n + +b.dataset.d));
+      onChange();
+    });
+  } else {
+    if (val) li.className = "done";
+    li.innerHTML = `<input type="checkbox" ${val ? "checked" : ""}><span class="t">${esc(task.t)}</span>`;
+    const cb = li.querySelector("input");
+    cb.onclick = e => e.stopPropagation();
+    cb.onchange = () => { store[key] = cb.checked; onChange(); };
+  }
+  return li;
+}
+function taskDone(store, key, task) { return task.n ? (store[key] || 0) >= task.n : !!store[key]; }
+
+function renderHeader() {
+  const bp = currentBp();
+  $("charline").textContent = `${S.name || "Unnamed"} · ${S.cls || "—"} · Item level ${S.il.toLocaleString()}` +
+    (bp ? ` · Next: ${bp.title}` : " · All breakpoints cleared");
+}
+
+function renderRoadmap() {
+  const bp = currentBp();
+  $("ilInput").value = S.il || "";
+  $("lv45").checked = S.lv45;
+  if (!bp) {
+    $("goalTitle").textContent = "Every breakpoint cleared";
+    $("goalText").textContent = "Keep the daily and weekly loops going and add new breakpoints when a patch raises the cap.";
+    $("goalBar").style.width = "100%"; $("goalProgress").textContent = "";
+  } else {
+    $("goalTitle").textContent = bp.title;
+    $("goalText").innerHTML = `${esc(bp.goal)}<div class="small muted" style="margin-top:4px">Done when: ${esc(bp.done)}</div>`;
+    const idx = BREAKPOINTS.indexOf(bp);
+    let pct, txt;
+    if (bp.gate === "level") {
+      const d = bp.tasks.filter(t => taskDone(S.bpTasks, bp.id + "." + t.id, t)).length;
+      pct = d / bp.tasks.length * 100; txt = `${d} of ${bp.tasks.length} tasks done`;
+    } else {
+      const prev = BREAKPOINTS.slice(0, idx).reverse().find(b => b.il)?.il || 0;
+      pct = Math.max(0, Math.min(100, (S.il - prev) / (bp.il - prev) * 100));
+      txt = `${S.il.toLocaleString()} / ${bp.il.toLocaleString()} item level — ${Math.max(0, bp.il - S.il).toLocaleString()} to go`;
+    }
+    $("goalBar").style.width = pct + "%"; $("goalProgress").textContent = txt;
+  }
+
+  const list = $("bpList"); list.innerHTML = "";
+  const openId = S.openBp || bp?.id;
+  BREAKPOINTS.forEach((b, i) => {
+    const cleared = bpCleared(b), isCur = b === bp;
+    const done = b.tasks.filter(t => taskDone(S.bpTasks, b.id + "." + t.id, t)).length;
+    const card = document.createElement("div");
+    card.className = "card bp" + (isCur ? " current" : "") + (cleared ? " cleared" : "") + (b.id === openId ? " open" : "");
+    card.innerHTML = `<div class="head">
+        <div><span class="muted small">Breakpoint ${i + 1}</span><h3>${cleared ? "✔ " : ""}${esc(b.title)}</h3>
+        <div class="small muted">Goal: ${esc(b.goal)}</div></div>
+        <span class="pill">${done}/${b.tasks.length}</span></div>
+      <div class="body"><div class="small"><b>Done when:</b> ${esc(b.done)}</div><ul class="check"></ul></div>`;
+    const ul = card.querySelector("ul");
+    b.tasks.forEach(t => ul.appendChild(taskRow(b.id + "." + t.id, t, S.bpTasks, () => { save(); renderRoadmap(); })));
+    card.querySelector(".head").onclick = () => { S.openBp = b.id === openId ? "none" : b.id; save(); renderRoadmap(); };
+    card.querySelector(".body").onclick = e => e.stopPropagation();
+    list.appendChild(card);
+  });
+  renderHeader();
+}
+
+function rollPeriods(now) {
+  const dk = lastDailyReset(now), wk = lastWeeklyReset(now);
+  if (S.daily.key !== dk) S.daily = { key: dk, done: {} };
+  if (S.weekly.key !== wk) S.weekly = { key: wk, done: {} };
+}
+
+function renderToday() {
+  const now = Date.now();
+  rollPeriods(now);
+  const dl = $("dailyList"); dl.innerHTML = "";
+  DAILY.forEach(t => dl.appendChild(taskRow(t.id, t, S.daily.done, () => { save(); renderToday(); })));
+
+  const grid = $("ctrGrid"); grid.innerHTML = "";
+  const sorted = COUNTERS.slice().sort((a, b) => timeToCap(a, now) - timeToCap(b, now));
+  sorted.forEach(c => {
+    const v = counterNow(c, now), cap = capOf(c), ttc = timeToCap(c, now);
+    const locked = c.minIl && S.il < c.minIl;
+    let cls = "", status;
+    if (v === null) status = `<span class="muted">Not set yet</span>`;
+    else if (c.kind === "manual") {
+      cls = v >= cap ? "bad" : v >= cap - 2 ? "warn" : "";
+      status = v >= cap ? `<span class="tag-bad">At cap — spend now</span>` : `<span class="muted">Update by hand</span>`;
+    } else if (ttc === 0) { cls = "bad"; status = `<span class="tag-bad">At cap — you're wasting refills</span>`; }
+    else {
+      cls = ttc < 6 * HOUR ? "bad" : ttc < 24 * HOUR ? "warn" : "";
+      status = `<span class="${cls ? "tag-" + cls : "tag-ok"}">Full in ${fmtDur(ttc)}</span>`;
+    }
+    const rate = c.kind === "regen" ? `+${c.amount} every ${c.hours}h` : c.kind === "daily" ? `+${c.amount} per daily reset` : "manual";
+    const el = document.createElement("div");
+    el.className = "card ctr " + (locked ? "" : cls);
+    el.innerHTML = `<div style="display:flex;justify-content:space-between"><h3>${esc(c.name)}</h3><span class="small muted">${rate}</span></div>
+      <div class="val">${v === null ? "–" : v} <span class="small muted">/ ${cap}</span></div>
+      <div class="small">${locked ? `<span class="muted">Locked until item level ${c.minIl.toLocaleString()}</span>` : status}</div>
+      <div class="row"><input type="number" min="0" max="${cap}" placeholder="in game"><button class="b" data-set>Set</button>
+      ${c.spend.map(s => `<button class="b" data-spend="${s}">−${s}</button>`).join("")}</div>
+      <div class="note">${esc(c.tip)}</div>`;
+    const inp = el.querySelector("input");
+    el.querySelector("[data-set]").onclick = () => { if (inp.value !== "") setCounter(c, +inp.value); };
+    inp.onkeydown = e => { if (e.key === "Enter" && inp.value !== "") setCounter(c, +inp.value); };
+    el.querySelectorAll("[data-spend]").forEach(b => b.onclick = () => setCounter(c, (counterNow(c, Date.now()) ?? 0) - +b.dataset.spend));
+    grid.appendChild(el);
+  });
+  save();
+}
+
+function renderWeek() {
+  rollPeriods(Date.now());
+  const wl = $("weeklyList"); wl.innerHTML = "";
+  WEEKLY.forEach(t => {
+    if (t.minIl && S.il < t.minIl) return;
+    wl.appendChild(taskRow(t.id, t, S.weekly.done, () => { save(); renderWeek(); }));
+  });
+  save();
+}
+
+function renderSettings() {
+  $("sName").value = S.name; $("sClass").value = S.cls; $("sRegion").value = S.region;
+  $("sHour").value = S.resetHour; $("sSub").checked = S.sub;
+}
+
+function renderTimers() {
+  const now = Date.now();
+  $("dailyIn").textContent = fmtDur(nextDailyReset(now) - now);
+  $("weeklyIn").textContent = fmtDur(nextWeeklyReset(now) - now);
+}
+
+function renderAll() { renderRoadmap(); renderToday(); renderWeek(); renderSettings(); renderTimers(); }
+
+/* =====================================================================
+   WIRING
+   ===================================================================== */
+$("nav").onclick = e => {
+  const tab = e.target.dataset.tab; if (!tab) return;
+  document.querySelectorAll("nav button").forEach(b => b.classList.toggle("on", b.dataset.tab === tab));
+  document.querySelectorAll("main section").forEach(s => s.classList.toggle("on", s.id === tab));
+  try { sessionStorage.setItem("tab", tab); } catch {}
+};
+$("ilInput").onchange = () => { S.il = Math.max(0, +$("ilInput").value || 0); S.openBp = null; save(); renderAll(); };
+$("lv45").onchange = () => { S.lv45 = $("lv45").checked; S.openBp = null; save(); renderAll(); };
+$("sName").oninput = () => { S.name = $("sName").value; save(); renderHeader(); };
+$("sClass").oninput = () => { S.cls = $("sClass").value; save(); renderHeader(); };
+$("sRegion").onchange = () => { S.region = $("sRegion").value; save(); renderAll(); };
+$("sHour").onchange = () => { S.resetHour = Math.max(0, Math.min(23, +$("sHour").value || 0)); save(); renderAll(); };
+$("sSub").onchange = () => { S.sub = $("sSub").checked; save(); renderAll(); };
+
+$("exportBtn").onclick = () => {
+  const blob = new Blob([JSON.stringify(S, null, 2)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `aion2-tracker-backup-${new Date().toISOString().slice(0, 10)}.json`;
+  a.click(); URL.revokeObjectURL(a.href);
+};
+$("importBtn").onclick = () => $("importFile").click();
+$("importFile").onchange = async () => {
+  const f = $("importFile").files[0]; if (!f) return;
+  try { S = Object.assign(structuredClone(DEFAULT_STATE), JSON.parse(await f.text())); save(); renderAll(); alert("Backup imported."); }
+  catch { alert("That file isn't a valid backup."); }
+};
+$("wipeBtn").onclick = () => {
+  if (confirm("Erase all progress in this tracker? Export a backup first if you want to keep it.")) {
+    S = structuredClone(DEFAULT_STATE); save(); renderAll();
+  }
+};
+
+$("notesCard").innerHTML = CLASS_NOTES;
+try { const t = sessionStorage.getItem("tab"); if (t) document.querySelector(`nav button[data-tab="${t}"]`)?.click(); } catch {}
+renderAll();
+setInterval(() => { renderTimers(); if (document.querySelector("#today.on") && !document.activeElement?.matches("#today input")) renderToday(); }, 30e3);
+</script>
+</body>
+</html>
