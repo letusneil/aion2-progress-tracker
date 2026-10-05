@@ -234,8 +234,6 @@ const BREAKPOINTS = [
     id: "il1400", title: "Item level ~1,400 → Vakron Sky Island", il: 1400,
     goal: "All gear to +10 with Manastones — enough for Vakron.",
     done: "About 1,400 item level.",
-    video: "https://www.youtube.com/watch?v=u3Wb6tH0mZs",
-    videoLabel: "▶ Whelps: 1,400 → 2,100 guide",
     tasks: [
       { id: "plus10", t: "Enhance every gear piece to +10.",
         info: "Enhancing raises a piece's level (+1, +2…). Item level = the total power of all your gear, and it's what unlocks dungeons." },
@@ -249,46 +247,91 @@ const BREAKPOINTS = [
       { id: "loop", t: "Start doing the Today and This week tabs every reset." }
     ]
   },
+  // Breakpoints 1,600 → 2,100 follow TheWhelps' "1400 To 2100 Guide – Road To 3 Star Conquest".
   {
-    id: "il1600", title: "Full Vakron set → Deus Research Base ★1", il: 1600,
-    goal: "Farm Vakron Sky Island until you have the full set.",
-    done: "Full Vakron set and about 1,600 item level.",
-    video: "https://www.youtube.com/watch?v=HE1MNfy8Zjo",
+    id: "il1600", title: "Item level 1,600 → Transcendence ★1", il: 1600,
+    goal: "Collect 7 Vakron armor pieces without wasting runs on duplicates, then upgrade.",
+    done: "1,600 item level — Transcendence Stage 1 opens.",
+    video: "https://www.youtube.com/watch?v=u3Wb6tH0mZs",
+    videoLabel: "▶ Whelps: 1,400 → 2,100 guide",
     tasks: [
-      { id: "vakset", t: "Run Vakron Sky Island until you have the full set.",
-        info: "Vakron is a 2★ Exploration dungeon (a group dungeon you can matchmake into) that drops an armor set." },
-      { id: "vak3", t: "Run Vakron Exploration 3 times for the guaranteed chest piece, then spend Odyle Energy on Vakron Conquest toward the next guaranteed piece.",
-        info: "Conquest = the harder, energy-gated version of a dungeon. Prioritise gloves with Combat Speed, then boots with Move Speed." },
-      { id: "vak10", t: "Enhance your Vakron pieces as you get them." },
-      { id: "pity", t: "At 7/8 pieces and far from pity, switch to the Expedition version to hit pity.",
-        info: "'Pity' = a guaranteed drop after enough runs without luck. The Expedition version counts toward it faster." }
+      { id: "vakfirst", t: "Run Vakron Sky Island before Urugugu Canyon.",
+        info: "Vakron has a smaller loot pool, so almost every drop is an upgrade for your class. Both open at item level 1,400.", link: "https://www.youtube.com/watch?v=HE1MNfy8Zjo" },
+      { id: "conqfirst", t: "Always run Conquest before Exploration.",
+        info: "Conquest (normal mode) gives 300k unbound Kinah, wings, artwork and crafting mats. Exploration (easy mode) gives 150k bound Kinah and fewer drops — do it last." },
+      { id: "six", t: "Run Vakron Conquest until you have 6 different armor pieces.", n: 6 },
+      { id: "seventh", t: "Switch to Vakron Exploration: 3 cube openings unlock the Guaranteed Reward Chest. Pick your missing 7th piece from it.",
+        info: "This skips the RNG of duplicate drops." },
+      { id: "voucher", t: "Pro tip: take the Gear Change Voucher from the chest instead.",
+        info: "Crafting an Armor Selection Chest from it costs only 500 Kinah. With 2 vouchers and 1.5M Kinah you can craft a 'God' weapon if you don't have one." },
+      { id: "urugugu", t: "With 7 pieces, move to Urugugu Canyon and upgrade your new gear until you hit 1,600." }
     ]
   },
   {
-    id: "il1920", title: "~1,920 → Deus ★2", il: 1920,
-    goal: "Get every green Arcana card from Deus Stage 1.",
-    done: "All green cards and about 1,920 item level.",
+    id: "il1700", title: "Item level 1,700 → quick Arcana boost", il: 1700,
+    goal: "Fill all 5 Arcana slots with any card for a free +100.",
+    done: "All 5 Arcana slots filled, about 1,700 item level.",
     video: "https://www.youtube.com/watch?v=2IRfvEWFvqk",
     tasks: [
-      { id: "arkanis", t: "Run both Transcendence dungeons: Deus Research Base and Shattered Arkanis.",
-        info: "They drop different cards. Deus: Chalice, Compass, Bell. Shattered Arkanis: Chalice, Parchment, Mirror. Alternate to fill all 5 slots. Equip the highest rarity you have, even with bad skills on it." },
-      { id: "green", t: "Farm Deus Stage 1 until you have all green cards (blues are a bonus).",
-        info: "Deus Research Base is a Transcendence dungeon. It drops Arcana: cards you equip that add stats and skill levels. Rarity goes green → blue → yellow." },
-      { id: "ambelt2", t: "Level your belt and amulet for extra item level, bulk and damage.",
-        info: "Belt uses Stronghold scrolls, amulet uses feather scrolls from the Monolith." }
+      { id: "arkanis1", t: "Run Shattered Arkanis Stage 1 at least once.",
+        info: "Drops Chalice, Parchment and Mirror cards." },
+      { id: "deus1", t: "Run Deus Research Base Stage 1 at least once.",
+        info: "Drops Chalice, Compass and Bell cards." },
+      { id: "fill5", t: "Equip a card in every slot — ignore the skills on them for now.",
+        info: "Arcana item level by rarity: grey +20, green +40, blue +60, yellow/gold +80. Five greys = +100." }
+    ]
+  },
+  {
+    id: "il1900", title: "Item level 1,900 → Transcendence ★2", il: 1900,
+    goal: "Finish your gear at +10 and buy every Daevanion Crystal you can.",
+    done: "1,900 item level — Transcendence Stage 2 opens.",
+    tasks: [
+      { id: "gear89", t: "Get 8–9 level-appropriate pieces to +10 with Manastones.",
+        info: "Back to Conquest for the missing pieces. This part is RNG-heavy." },
+      { id: "lesser", t: "Use Lesser Manastones. Reroll only if all 4 lines are grey (aim for at least 1 green line).",
+        info: "Intermediate stones are fine too. Save Superior stones for later gear." },
+      { id: "shugoshop", t: "Buy out the Daevanion Crystals in the Shugo Shop with Shugo points.",
+        info: "Shugo points often come from attendance rewards." },
+      { id: "nmshop", t: "Climb Nightmare bosses for first-clear rewards and buy out the Daevanion Crystals in the Nightmare Shop." },
+      { id: "dutyprio", t: "On Duty Quests, pick Shugo Keys, Nightmare Tickets and Odyle Energy as rewards." },
+      { id: "ambelt2", t: "Keep levelling belt and amulet (sheet tip: extra item level, bulk and damage)." }
+    ]
+  },
+  {
+    id: "il2000", title: "Item level 2,000 → craft a Unique Chalice", il: 2000,
+    goal: "Get about 3 blue Arcana cards from Stage 2.",
+    done: "3 blue cards and about 2,000 item level.",
+    tasks: [
+      { id: "blue3", t: "Farm both Transcendence Stage 2 dungeons until you have about 3 blue cards.", n: 3,
+        info: "Stage 2: 60% chance for green, 12% for blue (except the Chalice slot)." },
+      { id: "keepdupes", t: "Keep your duplicate cards — you'll extract them for a Mysterious Crystal next." },
+      { id: "daeva2", t: "Keep buying Daevanion Crystals." }
+    ]
+  },
+  {
+    id: "il2100", title: "Item level 2,100 → 3★ Conquest", il: 2100,
+    goal: "Craft an item level 80 Unique Chalice early — it normally only drops from Stage 4.",
+    done: "2,100 item level — Fire Temple and Ferocious Horn Den (3★ Conquest) open.",
+    tasks: [
+      { id: "crystals", t: "Collect 5 Mysterious Crystals and 2M Kinah.", n: 5 },
+      { id: "asc4000", t: "Ascension Trial on Hard: score 4,000 points for 3 crystals.",
+        info: "Crystals come at 1,000 / 3,000 / 4,000 points via the Season Tower of Trials challenge missions. Score is based on clear speed — about 10:43 remaining is the benchmark." },
+      { id: "season1", t: "Season Shop: buy exactly 1 crystal (not more)." },
+      { id: "extract", t: "Arcana Extract: feed your duplicate cards until the meter hits 100% for 1 crystal." },
+      { id: "craft", t: "Craft Chalice of Vigor with ONE main skill as the additional effect (Spiritmaster: Elemental Fusion).",
+        info: "Vigor = Time (Combat Speed); the Magic version gives Space (Move Speed). Picking two skills raises the cost to 15 crystals and 15M Kinah — not worth it." },
+      { id: "tap", t: "Still 2–3 short of 2,100? Upgrade your blue cards a little to push over." }
     ]
   },
   {
     id: "il2190", title: "~2,190 → Kromede", il: 2190,
-    goal: "Get every blue Arcana card from Deus Stage 2 and fill your Daevanion board.",
+    goal: "Get every blue Arcana card from Stage 2 and fill your Daevanion board.",
     done: "All blue cards, main skills at +16, about 2,190 item level.",
     tasks: [
       { id: "blue", t: "Farm Deus Stage 2 until you have all blue cards, ideally with your main skills on them." },
       { id: "skill16", t: "Main skills at level 16+ (Combustion, Elemental Fusion).",
         info: "Skill levels above the normal cap come from Arcana, gear and Daevanion nodes." },
-      { id: "board", t: "Spend Daevanion points." },
-      { id: "c3", t: "At 2,100: 3★ Conquest opens (Fire Temple and Ferocious Horn Den).",
-        info: "The goal of the Whelps 1,400 → 2,100 video. These drop the next tier of gear." }
+      { id: "board", t: "Spend Daevanion points." }
     ]
   },
   {
@@ -335,14 +378,14 @@ const COUNTERS = [
 
 // From the sheet's "DailyWeeklies" tab.
 const DAILY = [
-  { id: "duty", t: "Duty Quests", n: 5, info: "When you reroll a Duty Quest reward, take Odyle Energy if it shows up; otherwise enhancement stones." },
+  { id: "duty", t: "Duty Quests", n: 5, info: "Reward priority: Shugo Keys, Nightmare Tickets, Odyle Energy. Otherwise enhancement stones." },
   { id: "nmd", t: "Nightmare (2 per day)" },
   { id: "shugo", t: "Shugo Festival (2 per day)" },
   { id: "odylecap", t: "Spend Odyle Energy so it isn't sitting at the cap" }
 ];
 
 const WEEKLY = [
-  { id: "asc", t: "Ascension Trial", n: 3, info: "Rewards scale with how well you do. Save attempts until you're stronger, but use them before the weekly reset." },
+  { id: "asc", t: "Ascension Trial", n: 3, info: "Rewards scale with your score. On Hard, 4,000 points gives 3 Mysterious Crystals (via Season Tower of Trials missions). Save attempts until you're stronger, but use them before the weekly reset." },
   { id: "dd", t: "Daily Dungeon", n: 14 },
   { id: "bf", t: "Battlefield", n: 3 },
   { id: "corr", t: "Abyss Corridors", n: 3 },
@@ -382,12 +425,16 @@ const GLOSSARY = [
   ["Exploration / Expedition dungeon", "Group dungeons you can matchmake into. Vakron Sky Island is a 2★ one."],
   ["Transcendence (Deus / Shattered Arkanis)", "Two dungeons with stages ★1–★4 (item level 1,600 / 1,900 / 2,200 / 2,500) that drop Arcana cards. Deus: Chalice, Compass, Bell. Arkanis: Chalice, Parchment, Mirror."],
   ["Exploration vs Conquest", "Two modes of the same dungeon. Exploration is the easier one; Conquest is harder, costs Odyle Energy for the reward and drops better gear. 3★ Conquest (Fire Temple, Ferocious Horn Den) needs item level 2,100."],
-  ["Arcana", "Cards you equip that add Divine stats and skill levels. Rarity: green → blue → yellow. Sets: Chalice, Parchment, Compass, Bell, Mirror."],
+  ["Arcana", "Cards you equip that add Divine stats, skill levels and item level: grey +20, green +40, blue +60, yellow +80. Slots: Chalice, Parchment, Compass, Bell, Mirror."],
   ["Stigma / Stigma Shards", "Extra skills you slot in (4 slots on Global, unlocking at 22/27/32/37). Shards level them; buy shards with Abyss Points."],
   ["Specialty", "Optional upgrades on each skill (5 lines per skill, listed top to bottom). You pick a few as the skill levels up."],
   ["Chain skill", "A follow-up skill that appears right after another skill — shown stacked above it on the hotbar."],
   ["Macro", "A key that fires a list of skills in order. Set it up in the skill window (K)."],
-  ["Pity", "A guaranteed drop after enough unlucky runs."],
+  ["Pity / Guaranteed Reward Chest", "A guaranteed reward after enough runs. In Vakron Exploration it's 3 cube openings, and you pick the item."],
+  ["Gear Change Voucher", "Option in the guaranteed chest. Crafts into an Armor Selection Chest for 500 Kinah."],
+  ["Mysterious Crystal", "Material for crafting a Unique Arcana card (5 + 2M Kinah for a Chalice). From Ascension Trial Hard, the Season Shop and Arcana Extract."],
+  ["Arcana Extract", "Menu where you feed duplicate Arcana cards to fill a meter; at 100% you get a Mysterious Crystal."],
+  ["Bound vs unbound Kinah", "Unbound Kinah can be traded or sent to other players; bound Kinah can't."],
   ["Substance Morph", "Crafting that turns materials into other items, including Odyle Energy (20 per week)."],
   ["Vakron / Kromede / Ferocious Horn Den", "Dungeons on the gear route: Vakron = armor set, Kromede = accessories, Ferocious Horn Den = Guard + armor."],
   ["Ludra", "The first 10-player Sanctuary raid."],
